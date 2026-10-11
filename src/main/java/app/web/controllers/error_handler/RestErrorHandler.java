@@ -1,4 +1,4 @@
-package app.web.error_handler;
+package app.web.controllers.error_handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

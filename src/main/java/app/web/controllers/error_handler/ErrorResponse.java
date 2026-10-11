@@ -1,4 +1,4 @@
-package app.web.error_handler;
+package app.web.controllers.error_handler;
 
 public class ErrorResponse {
 

@@ -1,11 +1,11 @@
-package app.web.error_handler;
+package app.web.controllers.error_handler;
 
 import java.util.LinkedHashMap;
 
-public class ErrorResponseWithForm {
+public class WebValidationException extends RuntimeException {
 	
 	private LinkedHashMap<String, String> errorInformation;
-
+	
 	public LinkedHashMap<String, String> getErrorInformation() {
 		return errorInformation;
 	}
