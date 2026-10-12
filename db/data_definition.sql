@@ -5,6 +5,15 @@ USE bank_xyz;
 /* ********************************************************************************************************* */
 /* ********************************************************************************************************* */
 
+CREATE TABLE `iban_configuration` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `country_code` CHAR(2) NOT NULL,
+  `check_digits` CHAR(2) NOT NULL,
+  `bank_code` CHAR(4) NOT NULL,
+  `sort_code` CHAR(6) NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
 CREATE TABLE `bank_card` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `type` VARCHAR(12) NOT NULL,

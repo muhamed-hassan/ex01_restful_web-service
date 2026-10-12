@@ -1,3 +1,9 @@
+INSERT INTO `iban_configuration` (`country_code`, `check_digits`, `bank_code`, `sort_code`) 
+    VALUES ('GB', '29', 'NWBK', '601613');
+
+UPDATE `customer`
+    SET `balance` = 15000;
+    
 INSERT INTO `bank_card` (`type`) VALUES ('Debit card');
 INSERT INTO `bank_card` (`type`) VALUES ('Credit card');
 INSERT INTO `bank_card` (`type`) VALUES ('Prepaid card');
