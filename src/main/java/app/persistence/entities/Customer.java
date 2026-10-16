@@ -29,7 +29,7 @@ public class Customer {
 	private ContactInfo contactInfo;
 	
 	@Embedded
-	private BankAccountInfo bankAccountInfo;
+	private BankAccountInformation bankAccountInformation;
 	
 	public int getId() {
 		return id;
@@ -71,12 +71,12 @@ public class Customer {
 		this.contactInfo = contactInfo;
 	}
 
-	public BankAccountInfo getBankAccountInfo() {
-		return bankAccountInfo;
+	public BankAccountInformation getBankAccountInformation() {
+		return bankAccountInformation;
 	}
 
-	public void setBankAccountInfo(BankAccountInfo bankAccountInfo) {
-		this.bankAccountInfo = bankAccountInfo;
+	public void setBankAccountInformation(BankAccountInformation bankAccountInformation) {
+		this.bankAccountInformation = bankAccountInformation;
 	}
 	
 	@Override

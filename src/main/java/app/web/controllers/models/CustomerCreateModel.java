@@ -2,7 +2,7 @@ package app.web.controllers.models;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder({ "name", "nationalId", "dateOfBirth", "mobile", "email", "mailingAddress", "accountNumber", "balance" })
+@JsonPropertyOrder({ "name", "nationalId", "dateOfBirth", "mobile", "email", "mailingAddress" })
 public class CustomerCreateModel extends CustomerModel {
 
 	private String name;
@@ -11,10 +11,6 @@ public class CustomerCreateModel extends CustomerModel {
 	
 	private String dateOfBirth; // yyyy-MM-dd
 	
-	private String accountNumber;	
-	
-	private float balance;
-
 	public String getName() {
 		return name;
 	}
@@ -37,22 +33,6 @@ public class CustomerCreateModel extends CustomerModel {
 
 	public void setDateOfBirth(String dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
-	}
-
-	public String getAccountNumber() {
-		return accountNumber;
-	}
-
-	public void setAccountNumber(String accountNumber) {
-		this.accountNumber = accountNumber;
-	}
-
-	public float getBalance() {
-		return balance;
-	}
-
-	public void setBalance(float balance) {
-		this.balance = balance;
 	}
 	
 }

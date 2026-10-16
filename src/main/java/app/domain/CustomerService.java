@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import app.persistence.entities.BankAccountInformation;
 import app.persistence.entities.BankCard;
 import app.persistence.entities.BankTransaction;
 import app.persistence.entities.BorrowedLoan;
@@ -49,13 +50,17 @@ public class CustomerService {
 	@Transactional
 	public void openBankAccount(Customer newCustomer) {
 		
+		BankAccountInformation bankAccountInformation = new BankAccountInformation();
+		
 		Random random = new Random(System.currentTimeMillis());        
 		long generatedNumber = Math.abs(random.nextLong());		        
 		String generatedNumberString = generatedNumber + "";
 		String accountNumber = generatedNumberString.substring(0, 8);
-		newCustomer.getBankAccountInfo().setAccountNumber(accountNumber);
+		bankAccountInformation.setAccountNumber(accountNumber);
 		
-		newCustomer.getBankAccountInfo().setBalance(0);
+		bankAccountInformation.setBalance(0);
+		
+		newCustomer.setBankAccountInformation(bankAccountInformation);
 		
 		customerRepository.save(newCustomer);		
 	}
@@ -67,12 +72,12 @@ public class CustomerService {
 		
 		BankCard selectedBankCardType = bankCardRepository.findById(bankCardTypeId);
 		
-		Date dateOfIssuance = new Date();
+		//Date dateOfIssuance = new Date();
 		
 		IssuedBankCard newlyIssuedBankCard = new IssuedBankCard();
 		newlyIssuedBankCard.setIssuer(issuer);
 		newlyIssuedBankCard.setType(selectedBankCardType);
-		newlyIssuedBankCard.setDateOfIssuance(dateOfIssuance);
+		newlyIssuedBankCard.setDateOfIssuance(/*dateOfIssuance*/null);
 		
 		issuedBankCardRepository.save(newlyIssuedBankCard);		
 	}

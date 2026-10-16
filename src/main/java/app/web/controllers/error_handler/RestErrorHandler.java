@@ -20,6 +20,15 @@ public class RestErrorHandler {
 	}
 	
 	@ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException exception) {
+		
+		ErrorResponse errorResponse = new ErrorResponse();
+		errorResponse.setError(exception.getMessage());
+		
+		return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.BAD_REQUEST);	
+	}
+	
+	@ExceptionHandler
     public ResponseEntity<ErrorResponseWithForm> handleWebValidationException(WebValidationException exception) {
 		
 		ErrorResponseWithForm errorResponseWithForm = new ErrorResponseWithForm();

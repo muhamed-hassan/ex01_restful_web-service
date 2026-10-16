@@ -4,7 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class BankAccountInfo {
+public class BankAccountInformation {
 
 	@Column(name = "account_number")
 	private String accountNumber;	

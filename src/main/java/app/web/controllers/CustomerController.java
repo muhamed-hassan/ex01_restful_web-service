@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import app.domain.CustomerService;
+import app.web.controllers.transformers.CustomerTransformer;
 
 @RequestMapping("customers")
 @RestController
@@ -12,5 +13,8 @@ public class CustomerController {
 
 	@Autowired
 	private CustomerService customerService;
+	
+	@Autowired
+	private CustomerTransformer customerTransformer;
 	
 }
