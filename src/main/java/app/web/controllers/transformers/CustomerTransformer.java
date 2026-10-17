@@ -3,19 +3,25 @@ package app.web.controllers.transformers;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import app.persistence.entities.ContactInfo;
 import app.persistence.entities.Customer;
+import app.web.controllers.models.BriefViewOfCustomerReadModel;
 import app.web.controllers.models.CustomerCreateModel;
+import app.web.controllers.models.DetailedViewOfCustomerReadModel;
 
 @Component
 public class CustomerTransformer {
 	
-	@Value("${date.pattern}")
-    private String datePattern;
+	/*@Value("${date.pattern}")
+    private String datePattern;*/
+	@Autowired
+	private SimpleDateFormat simpleDateFormat;
 	
 	public Customer toCustomer(CustomerCreateModel customerCreateModel) {
 		
@@ -24,8 +30,8 @@ public class CustomerTransformer {
 		customer.setNationalId(customerCreateModel.getNationalId());
 		
 		try {			
-			DateFormat dateFormat = new SimpleDateFormat(datePattern);
-			customer.setDateOfBirth(dateFormat.parse(customerCreateModel.getDateOfBirth()));			
+			//DateFormat dateFormat = new SimpleDateFormat(datePattern);
+			customer.setDateOfBirth(simpleDateFormat.parse(customerCreateModel.getDateOfBirth()));			
 		} catch (ParseException e) {
 			throw new IllegalArgumentException("Date of birth contains invalid characters which shall be in the form of yyyy-MM-dd.");
 		}
@@ -37,6 +43,33 @@ public class CustomerTransformer {
 		customer.setContactInfo(contactInfo);
 		
 		return customer;
+	}
+	
+	public DetailedViewOfCustomerReadModel toDetailedViewOfCustomerReadModel(Object[] rawRecord) {
+		
+		//DateFormat dateFormat = new SimpleDateFormat(datePattern);
+		
+		DetailedViewOfCustomerReadModel detailedViewOfCustomerReadModel = new DetailedViewOfCustomerReadModel();
+		detailedViewOfCustomerReadModel.setName((String) rawRecord[0]);		
+		detailedViewOfCustomerReadModel.setNationalId((String) rawRecord[1]);
+		detailedViewOfCustomerReadModel.setDateOfBirth(simpleDateFormat.format((Date) rawRecord[2]));	
+		detailedViewOfCustomerReadModel.setMobile((String) rawRecord[3]);
+		detailedViewOfCustomerReadModel.setEmail((String) rawRecord[4]);
+		detailedViewOfCustomerReadModel.setMailingAddress((String) rawRecord[5]);		
+		detailedViewOfCustomerReadModel.setIban((String) rawRecord[6]);
+		detailedViewOfCustomerReadModel.setBalance((float) rawRecord[7]);
+		
+		return detailedViewOfCustomerReadModel;
+	}
+	
+	public BriefViewOfCustomerReadModel toBriefViewOfCustomerReadModel(Object[] rawRecord) {
+		
+		BriefViewOfCustomerReadModel briefViewOfCustomerReadModel = new BriefViewOfCustomerReadModel();
+		briefViewOfCustomerReadModel.setMobile((String) rawRecord[0]);
+		briefViewOfCustomerReadModel.setEmail((String) rawRecord[1]);
+		briefViewOfCustomerReadModel.setMailingAddress((String) rawRecord[2]);
+		
+		return briefViewOfCustomerReadModel;
 	}
 
 }

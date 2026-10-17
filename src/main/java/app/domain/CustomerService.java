@@ -12,6 +12,7 @@ import app.persistence.entities.BankCard;
 import app.persistence.entities.BankTransaction;
 import app.persistence.entities.BorrowedLoan;
 import app.persistence.entities.Customer;
+import app.persistence.entities.IbanConfiguration;
 import app.persistence.entities.IssuedBankCard;
 import app.persistence.entities.Loan;
 import app.persistence.entities.Transaction;
@@ -19,6 +20,7 @@ import app.persistence.repositories.BankCardRepository;
 import app.persistence.repositories.BankTransactionRepository;
 import app.persistence.repositories.BorrowedLoanRepository;
 import app.persistence.repositories.CustomerRepository;
+import app.persistence.repositories.IbanConfigurationRepository;
 import app.persistence.repositories.IssuedBankCardRepository;
 import app.persistence.repositories.LoanRepository;
 import app.persistence.repositories.TransactionRepository;
@@ -46,6 +48,9 @@ public class CustomerService {
 	
 	@Autowired
 	private BorrowedLoanRepository borrowedLoanRepository;
+	
+	@Autowired
+	private IbanConfigurationRepository ibanConfigurationRepository;
 	
 	@Transactional
 	public void openBankAccount(Customer newCustomer) {
@@ -116,6 +121,32 @@ public class CustomerService {
 		borrowedLoan.setBorrowingDate(borrowingDate);
 		
 		borrowedLoanRepository.save(borrowedLoan);
+	}
+	
+	public Object[] getDetailedViewOfCustomerInformation(int customerId) {
+				
+		Object[] rawRecord = customerRepository.findDetailedViewOfCustomerInformation(customerId);
+		
+		IbanConfiguration ibanConfiguration = ibanConfigurationRepository.findById(1);
+		
+		rawRecord[6] = toIban(ibanConfiguration, (String) rawRecord[6]); 
+		
+		return rawRecord;
+	}
+	
+	public Object[] getBriefViewOfCustomerInformation(int customerId) {
+		
+		Object[] rawRecord = customerRepository.findBriefViewOfCustomerInformation(customerId);
+		
+		return rawRecord;
+	}
+	
+	/* *************************************************************************************************** */
+	
+	private String toIban(IbanConfiguration ibanConfiguration, String accountNumber) {
+		
+		return ibanConfiguration.getCountryCode() + ibanConfiguration.getCheckDigits() + 
+				ibanConfiguration.getBankCode() + ibanConfiguration.getSortCode() + accountNumber;
 	}
 
 }
