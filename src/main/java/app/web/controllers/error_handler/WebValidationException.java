@@ -4,14 +4,14 @@ import java.util.LinkedHashMap;
 
 public class WebValidationException extends RuntimeException {
 	
-	private LinkedHashMap<String, String> errorInformation;
+	private LinkedHashMap<String, String> errors;
 	
-	public LinkedHashMap<String, String> getErrorInformation() {
-		return errorInformation;
+	public LinkedHashMap<String, String> getErrors() {
+		return errors;
 	}
 
-	public void setErrorInformation(LinkedHashMap<String, String> errorInformation) {
-		this.errorInformation = errorInformation;
+	public void setErrors(LinkedHashMap<String, String> errors) {
+		this.errors = errors;
 	}
 	
 }

@@ -24,6 +24,7 @@ import app.persistence.repositories.IbanConfigurationRepository;
 import app.persistence.repositories.IssuedBankCardRepository;
 import app.persistence.repositories.LoanRepository;
 import app.persistence.repositories.TransactionRepository;
+import app.web.controllers.models.CustomerUpdateModel;
 
 @Service
 public class CustomerService {
@@ -71,20 +72,34 @@ public class CustomerService {
 	}
 	
 	@Transactional
-	public void issueBankCard(int customerId, int bankCardTypeId) {
+	public void issueBankCard(int customerId, int bankCardTypeId, Date dateOfIssuance) {
 		
 		Customer issuer = customerRepository.findById(customerId);
 		
 		BankCard selectedBankCardType = bankCardRepository.findById(bankCardTypeId);
+				
+		IssuedBankCard newBankCard = new IssuedBankCard();
+		newBankCard.setIssuer(issuer);
+		newBankCard.setType(selectedBankCardType);
+		newBankCard.setDateOfIssuance(dateOfIssuance);
 		
-		//Date dateOfIssuance = new Date();
+		issuedBankCardRepository.save(newBankCard);		
+	}
+	
+	@Transactional
+	public void borrowLoan(int customerId, int loanTypeId, float amount, Date borrowingDate) {
 		
-		IssuedBankCard newlyIssuedBankCard = new IssuedBankCard();
-		newlyIssuedBankCard.setIssuer(issuer);
-		newlyIssuedBankCard.setType(selectedBankCardType);
-		newlyIssuedBankCard.setDateOfIssuance(/*dateOfIssuance*/null);
+		Customer borrower = customerRepository.findById(customerId);
 		
-		issuedBankCardRepository.save(newlyIssuedBankCard);		
+		Loan loanType = loanRepository.findById(loanTypeId);			
+		
+		BorrowedLoan borrowedLoan = new BorrowedLoan();
+		borrowedLoan.setBorrower(borrower);
+		borrowedLoan.setType(loanType);
+		borrowedLoan.setAmount(amount);
+		borrowedLoan.setBorrowingDate(borrowingDate);
+		
+		borrowedLoanRepository.save(borrowedLoan);
 	}
 	
 	@Transactional
@@ -105,24 +120,6 @@ public class CustomerService {
 		transactionRepository.save(transaction);		
 	}
 	
-	@Transactional
-	public void borrowLoan(int customerId, int loanTypeId, float amount) {
-		
-		Customer borrower = customerRepository.findById(customerId);
-		
-		Loan loanType = loanRepository.findById(loanTypeId);
-				
-		Date borrowingDate = new Date();
-		
-		BorrowedLoan borrowedLoan = new BorrowedLoan();
-		borrowedLoan.setBorrower(borrower);
-		borrowedLoan.setType(loanType);
-		borrowedLoan.setAmount(amount);
-		borrowedLoan.setBorrowingDate(borrowingDate);
-		
-		borrowedLoanRepository.save(borrowedLoan);
-	}
-	
 	public Object[] getDetailedViewOfCustomerInformation(int customerId) {
 				
 		Object[] rawRecord = customerRepository.findDetailedViewOfCustomerInformation(customerId);
@@ -139,6 +136,12 @@ public class CustomerService {
 		Object[] rawRecord = customerRepository.findBriefViewOfCustomerInformation(customerId);
 		
 		return rawRecord;
+	}
+	
+	@Transactional
+	public void updateCustomerInformation(int customerId, CustomerUpdateModel customerUpdateModel) {
+		
+		customerRepository.update(customerId, customerUpdateModel);
 	}
 	
 	/* *************************************************************************************************** */

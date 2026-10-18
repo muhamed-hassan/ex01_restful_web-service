@@ -32,9 +32,7 @@ public class CustomerTransformer {
 		try {			
 			//DateFormat dateFormat = new SimpleDateFormat(datePattern);
 			customer.setDateOfBirth(simpleDateFormat.parse(customerCreateModel.getDateOfBirth()));			
-		} catch (ParseException e) {
-			throw new IllegalArgumentException("Date of birth contains invalid characters which shall be in the form of yyyy-MM-dd.");
-		}
+		} catch (ParseException e) {}
 		
 		ContactInfo contactInfo = new ContactInfo();
 		contactInfo.setMobile(customerCreateModel.getMobile());

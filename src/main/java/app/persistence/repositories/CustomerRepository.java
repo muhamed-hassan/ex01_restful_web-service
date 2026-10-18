@@ -3,6 +3,7 @@ package app.persistence.repositories;
 import java.util.LinkedHashSet;
 
 import app.persistence.entities.Customer;
+import app.web.controllers.models.CustomerUpdateModel;
 import lib.persistence.repositories.BaseRepository;
 
 public class CustomerRepository extends BaseRepository<Customer> {
@@ -38,6 +39,16 @@ public class CustomerRepository extends BaseRepository<Customer> {
 		Object[] rawRecord = findById(customerId, pathsOfFields);
 		
 		return rawRecord;
+	}
+	
+	public void update(int customerId, CustomerUpdateModel customerUpdateModel) {
+		
+		LinkedHashSet<String> pathsOfFields = new LinkedHashSet<String>();
+		pathsOfFields.add("customer.contactInfo.mobile");
+		pathsOfFields.add("customer.contactInfo.email");
+		pathsOfFields.add("customer.contactInfo.mailingAddress");
+		
+		updateById(customerId, pathsOfFields, customerUpdateModel);		
 	}
 
 }
