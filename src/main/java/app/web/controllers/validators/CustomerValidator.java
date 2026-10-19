@@ -8,6 +8,7 @@ import app.web.controllers.error_handler.WebValidationException;
 import app.web.controllers.models.CustomerCreateModel;
 import app.web.controllers.models.CustomerUpdateModel;
 import app.web.controllers.models.NewLoanCreateModel;
+import app.web.controllers.models.NewTransactionCreateModel;
 
 @Component
 public class CustomerValidator {
@@ -160,6 +161,21 @@ public class CustomerValidator {
 		LinkedHashMap<String, String> errors = new LinkedHashMap<String, String>(0);
 		
 		if (newLoanCreateModel.getAmount() <= 0) {
+			errors.put("amount", "Amount should be a positive value.");
+		}
+		
+		if (!errors.isEmpty()) {			
+			WebValidationException webValidationException = new WebValidationException();
+			webValidationException.setErrors(errors);
+			throw webValidationException;
+		}
+	}
+	
+	public void validateNewTransactionCreateModel(NewTransactionCreateModel newTransactionCreateModel) {
+		
+		LinkedHashMap<String, String> errors = new LinkedHashMap<String, String>(0);
+		
+		if (newTransactionCreateModel.getAmount() <= 0) {
 			errors.put("amount", "Amount should be a positive value.");
 		}
 		

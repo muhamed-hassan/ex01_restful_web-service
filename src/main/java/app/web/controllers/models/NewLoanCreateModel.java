@@ -2,7 +2,7 @@ package app.web.controllers.models;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder({ "amount", "natborrowingDate" })
+@JsonPropertyOrder({ "amount", "borrowingDate" })
 public class NewLoanCreateModel {
 	
 	private float amount;

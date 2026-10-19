@@ -15,14 +15,15 @@ import app.domain.CustomerService;
 import app.persistence.entities.Customer;
 import app.web.controllers.models.BriefViewOfCustomerReadModel;
 import app.web.controllers.models.CustomerCreateModel;
-
+import app.web.controllers.models.CustomerUpdateModel;
 import app.web.controllers.models.DetailedViewOfCustomerReadModel;
 import app.web.controllers.models.NewBankCardCreateModel;
 import app.web.controllers.models.NewLoanCreateModel;
-import app.web.controllers.transformers.BankCardTransformer;
+import app.web.controllers.models.NewTransactionCreateModel;
 import app.web.controllers.transformers.CustomerTransformer;
+import app.web.controllers.transformers.IssuedBankCardTransformer;
+import app.web.controllers.transformers.TransactionTransformer;
 import app.web.controllers.validators.CustomerValidator;
-import app.web.controllers.models.CustomerUpdateModel;
 
 @RequestMapping("customers")
 @RestController
@@ -35,7 +36,10 @@ public class CustomerController {
 	private CustomerTransformer customerTransformer;
 	
 	@Autowired
-	private BankCardTransformer bankCardTransformer;
+	private IssuedBankCardTransformer issuedBankCardTransformer;
+	
+	@Autowired
+	private TransactionTransformer transactionTransformer;
 	
 	@Autowired
 	private CustomerValidator customerValidator;
@@ -55,7 +59,7 @@ public class CustomerController {
 	@RequestMapping(method = RequestMethod.POST, value = "{customerId}/new-bank-cards/{bankCardTypeId}")
 	public ResponseEntity<Object> issueBankCard(@PathVariable int customerId, @PathVariable int bankCardTypeId, @RequestBody NewBankCardCreateModel newBankCardCreateModel) {
 		
-		Date dateOfIssuance = bankCardTransformer.toDateOfIssuance(newBankCardCreateModel.getDateOfIssuance());
+		Date dateOfIssuance = issuedBankCardTransformer.toDateOfIssuance(newBankCardCreateModel.getDateOfIssuance());
 		
 		customerService.issueBankCard(customerId, bankCardTypeId, dateOfIssuance);
 		
@@ -67,20 +71,23 @@ public class CustomerController {
 		
 		customerValidator.validateNewLoanCreateModel(newLoanCreateModel);
 		
-		Date dateOfIssuance = bankCardTransformer.toDateOfIssuance(newLoanCreateModel.getBorrowingDate());
+		Date dateOfIssuance = issuedBankCardTransformer.toDateOfIssuance(newLoanCreateModel.getBorrowingDate());
 		
 		customerService.borrowLoan(customerId, loanTypeId, newLoanCreateModel.getAmount(), dateOfIssuance);
 		
 		return new ResponseEntity<Object>(HttpStatus.CREATED);
 	}
 	
-	// TODO
 	@RequestMapping(method = RequestMethod.POST, value = "{customerId}/new-transactions/{bankTransactionTypeId}")
-	public ResponseEntity<Object> intiateTransaction() {
+	public ResponseEntity<Object> intiateTransaction(@PathVariable int customerId, @PathVariable int bankTransactionTypeId, @RequestBody NewTransactionCreateModel newTransactionCreateModel) {
 		
-		// IN PROGRESS
+		customerValidator.validateNewTransactionCreateModel(newTransactionCreateModel);
 		
-		return null;
+		Date occurredOn = transactionTransformer.toOccurredOn(newTransactionCreateModel.getOccurredOn());
+		
+		customerService.intiateTransaction(customerId, bankTransactionTypeId, newTransactionCreateModel.getAmount(), occurredOn);
+		
+		return new ResponseEntity<Object>(HttpStatus.CREATED);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "{customerId}/detailed-view")

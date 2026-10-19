@@ -103,14 +103,12 @@ public class CustomerService {
 	}
 	
 	@Transactional
-	public void intiateTransaction(int customerId, int bankTransactionTypeId, float amount) {
+	public void intiateTransaction(int customerId, int bankTransactionTypeId, float amount, Date occurredOn) {
 		
 		Customer initiator = customerRepository.findById(customerId);
 				
 		BankTransaction bankTransactionType = bankTransactionRepository.findById(bankTransactionTypeId);
-		
-		Date occurredOn = new Date();
-		
+				
 		Transaction transaction = new Transaction();
 		transaction.setInitiator(initiator);
 		transaction.setType(bankTransactionType);

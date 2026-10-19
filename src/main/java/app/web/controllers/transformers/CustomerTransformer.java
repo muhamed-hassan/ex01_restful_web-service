@@ -1,12 +1,10 @@
 package app.web.controllers.transformers;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import app.persistence.entities.ContactInfo;
@@ -18,8 +16,6 @@ import app.web.controllers.models.DetailedViewOfCustomerReadModel;
 @Component
 public class CustomerTransformer {
 	
-	/*@Value("${date.pattern}")
-    private String datePattern;*/
 	@Autowired
 	private SimpleDateFormat simpleDateFormat;
 	
@@ -30,7 +26,6 @@ public class CustomerTransformer {
 		customer.setNationalId(customerCreateModel.getNationalId());
 		
 		try {			
-			//DateFormat dateFormat = new SimpleDateFormat(datePattern);
 			customer.setDateOfBirth(simpleDateFormat.parse(customerCreateModel.getDateOfBirth()));			
 		} catch (ParseException e) {}
 		
@@ -44,9 +39,7 @@ public class CustomerTransformer {
 	}
 	
 	public DetailedViewOfCustomerReadModel toDetailedViewOfCustomerReadModel(Object[] rawRecord) {
-		
-		//DateFormat dateFormat = new SimpleDateFormat(datePattern);
-		
+				
 		DetailedViewOfCustomerReadModel detailedViewOfCustomerReadModel = new DetailedViewOfCustomerReadModel();
 		detailedViewOfCustomerReadModel.setName((String) rawRecord[0]);		
 		detailedViewOfCustomerReadModel.setNationalId((String) rawRecord[1]);
