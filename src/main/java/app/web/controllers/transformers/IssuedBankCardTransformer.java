@@ -7,10 +7,12 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import app.persistence.entities.IssuedBankCard;
+
 @Component
-public class IssuedBankCardTransformer {
+public class IssuedBankCardTransformer extends BaseTransformer<IssuedBankCard, Object> {
 	
-	@Autowired
+	/*@Autowired
 	private SimpleDateFormat simpleDateFormat;
 	
 	public Date toDateOfIssuance(String dateOfIssuanceTextualValue) {
@@ -21,6 +23,6 @@ public class IssuedBankCardTransformer {
 		} catch (ParseException e) {}
 		
 		return dateOfIssuance;
-	}
+	}*/
 
 }

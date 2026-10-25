@@ -7,10 +7,12 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import app.persistence.entities.Transaction;
+
 @Component
-public class TransactionTransformer {
+public class TransactionTransformer extends BaseTransformer<Transaction, Object> {
 	
-	@Autowired
+	/*@Autowired
 	private SimpleDateFormat simpleDateFormat;
 	
 	public Date toOccurredOn(String occurredOnTextualValue) {
@@ -21,6 +23,6 @@ public class TransactionTransformer {
 		} catch (ParseException e) {}
 		
 		return occurredOn;
-	}
+	}*/
 
 }

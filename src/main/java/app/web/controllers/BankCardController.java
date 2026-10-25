@@ -29,7 +29,7 @@ public class BankCardController {
 		
 		ArrayList<BankCard> bankCards = administrativeService.getAvailableBankCardTypes();
 		
-		ArrayList<BankCardReadModel> bankCardReadModels = bankCardTransformer.toBankCardReadModels(bankCards);
+		ArrayList<BankCardReadModel> bankCardReadModels = bankCardTransformer.toModels(bankCards);
 		
 		return new ResponseEntity<ArrayList<BankCardReadModel>>(bankCardReadModels, HttpStatus.OK);
 	}

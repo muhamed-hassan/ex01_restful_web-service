@@ -2,15 +2,14 @@ package app.persistence.repositories;
 
 import java.util.LinkedHashSet;
 
+import org.springframework.stereotype.Repository;
+
 import app.persistence.entities.Customer;
 import app.web.controllers.models.CustomerUpdateModel;
 import lib.persistence.repositories.BaseRepository;
 
+@Repository
 public class CustomerRepository extends BaseRepository<Customer> {
-
-	protected CustomerRepository() {
-		super(Customer.class);
-	}
 	
 	public Object[] findDetailedViewOfCustomerInformation(int customerId) {
 		

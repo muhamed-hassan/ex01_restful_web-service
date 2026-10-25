@@ -12,9 +12,9 @@ import app.persistence.entities.Loan;
 import app.web.controllers.models.LoanReadModel;
 
 @Component
-public class LoanTransformer {
+public class LoanTransformer extends BaseTransformer<Loan, LoanReadModel> {
 	
-	@Autowired
+	/*@Autowired
 	private SimpleDateFormat simpleDateFormat;
 	
 	public ArrayList<LoanReadModel> toLoanReadModels(ArrayList<Loan> loans) {
@@ -42,6 +42,6 @@ public class LoanTransformer {
 		} catch (ParseException e) {}
 		
 		return borrowingDate;
-	}
+	}*/
 
 }

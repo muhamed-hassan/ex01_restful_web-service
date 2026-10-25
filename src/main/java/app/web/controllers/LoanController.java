@@ -29,7 +29,7 @@ public class LoanController {
 	
 		ArrayList<Loan> loans = administrativeService.getAvailableLoanTypes();
 		
-		ArrayList<LoanReadModel> loanReadModels = loanTransformer.toLoanReadModels(loans);
+		ArrayList<LoanReadModel> loanReadModels = loanTransformer.toModels(loans);
 		
 		return new ResponseEntity<ArrayList<LoanReadModel>>(loanReadModels, HttpStatus.OK);
 	}

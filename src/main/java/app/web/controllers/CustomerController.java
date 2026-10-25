@@ -59,7 +59,7 @@ public class CustomerController {
 	@RequestMapping(method = RequestMethod.POST, value = "{customerId}/new-bank-cards/{bankCardTypeId}")
 	public ResponseEntity<Object> issueBankCard(@PathVariable int customerId, @PathVariable int bankCardTypeId, @RequestBody NewBankCardCreateModel newBankCardCreateModel) {
 		
-		Date dateOfIssuance = issuedBankCardTransformer.toDateOfIssuance(newBankCardCreateModel.getDateOfIssuance());
+		Date dateOfIssuance = issuedBankCardTransformer.toDate(newBankCardCreateModel.getDateOfIssuance());
 		
 		customerService.issueBankCard(customerId, bankCardTypeId, dateOfIssuance);
 		
@@ -71,7 +71,7 @@ public class CustomerController {
 		
 		customerValidator.validateNewLoanCreateModel(newLoanCreateModel);
 		
-		Date dateOfIssuance = issuedBankCardTransformer.toDateOfIssuance(newLoanCreateModel.getBorrowingDate());
+		Date dateOfIssuance = issuedBankCardTransformer.toDate(newLoanCreateModel.getBorrowingDate());
 		
 		customerService.borrowLoan(customerId, loanTypeId, newLoanCreateModel.getAmount(), dateOfIssuance);
 		
@@ -83,7 +83,7 @@ public class CustomerController {
 		
 		customerValidator.validateNewTransactionCreateModel(newTransactionCreateModel);
 		
-		Date occurredOn = transactionTransformer.toOccurredOn(newTransactionCreateModel.getOccurredOn());
+		Date occurredOn = transactionTransformer.toDate(newTransactionCreateModel.getOccurredOn());
 		
 		customerService.intiateTransaction(customerId, bankTransactionTypeId, newTransactionCreateModel.getAmount(), occurredOn);
 		

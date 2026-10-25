@@ -29,7 +29,7 @@ public class BankTransactionController {
 		
 		ArrayList<BankTransaction> bankTransactions = administrativeService.getAvailableBankTransactionTypes();
 		
-		ArrayList<BankTransactionReadModel> bankTransactionReadModels = bankTransactionTransformer.toBankTransactionReadModels(bankTransactions);
+		ArrayList<BankTransactionReadModel> bankTransactionReadModels = bankTransactionTransformer.toModels(bankTransactions);
 		
 		return new ResponseEntity<ArrayList<BankTransactionReadModel>>(bankTransactionReadModels, HttpStatus.OK);
 	}

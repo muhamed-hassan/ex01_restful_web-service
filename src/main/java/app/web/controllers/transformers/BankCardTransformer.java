@@ -8,9 +8,9 @@ import app.persistence.entities.BankCard;
 import app.web.controllers.models.BankCardReadModel;
 
 @Component
-public class BankCardTransformer {
+public class BankCardTransformer extends BaseTransformer<BankCard, BankCardReadModel> {
 	
-	public ArrayList<BankCardReadModel> toBankCardReadModels(ArrayList<BankCard> bankCards) {
+	/*public ArrayList<BankCardReadModel> toBankCardReadModels(ArrayList<BankCard> bankCards) {
 		
 		ArrayList<BankCardReadModel> bankCardReadModels = new ArrayList<BankCardReadModel>();
 		for (int cursor = 0; cursor < bankCards.size(); cursor++) {
@@ -25,6 +25,6 @@ public class BankCardTransformer {
 		}
 		
 		return bankCardReadModels;
-	}
+	}*/
 	
 }

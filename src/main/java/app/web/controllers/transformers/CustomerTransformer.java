@@ -14,11 +14,8 @@ import app.web.controllers.models.CustomerCreateModel;
 import app.web.controllers.models.DetailedViewOfCustomerReadModel;
 
 @Component
-public class CustomerTransformer {
-	
-	@Autowired
-	private SimpleDateFormat simpleDateFormat;
-	
+public class CustomerTransformer extends BaseTransformer<Customer, Object> {
+		
 	public Customer toCustomer(CustomerCreateModel customerCreateModel) {
 		
 		Customer customer = new Customer();
