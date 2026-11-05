@@ -3,6 +3,6 @@ package app.web.controllers.models;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder({ "mobile", "email", "mailingAddress" })
-public class BriefViewOfCustomerReadModel extends CustomerModel {
+public class CustomerReadModelForUpdate extends CustomerModel {
 	
 }

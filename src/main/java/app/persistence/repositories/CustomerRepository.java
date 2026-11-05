@@ -17,23 +17,24 @@ public class CustomerRepository extends BaseRepository<Customer> {
 		pathsOfFields.add("customer.name");
 		pathsOfFields.add("customer.nationalId");
 		pathsOfFields.add("customer.dateOfBirth");
-		pathsOfFields.add("customer.contactInfo.mobile");
-		pathsOfFields.add("customer.contactInfo.email");
-		pathsOfFields.add("customer.contactInfo.mailingAddress");
-		pathsOfFields.add("customer.bankAccountInfo.accountNumber");
-		pathsOfFields.add("customer.bankAccountInfo.balance");
+		pathsOfFields.add("customer.contactInformation.mobile");
+		pathsOfFields.add("customer.contactInformation.email");
+		pathsOfFields.add("customer.contactInformation.mailingAddress");
+		pathsOfFields.add("customer.bankAccountInformation.accountNumber");
+		pathsOfFields.add("customer.bankAccountInformation.balance");
+		pathsOfFields.add("customer.joinedOn");
 		
 		Object[] rawRecord = findById(customerId, pathsOfFields);
 		
 		return rawRecord;
 	}
 	
-	public Object[] findBriefViewOfCustomerInformation(int customerId) {
+	public Object[] findUpdateViewOfCustomerInformation(int customerId) {
 		
 		LinkedHashSet<String> pathsOfFields = new LinkedHashSet<String>();
-		pathsOfFields.add("customer.contactInfo.mobile");
-		pathsOfFields.add("customer.contactInfo.email");
-		pathsOfFields.add("customer.contactInfo.mailingAddress");
+		pathsOfFields.add("customer.contactInformation.mobile");
+		pathsOfFields.add("customer.contactInformation.email");
+		pathsOfFields.add("customer.contactInformation.mailingAddress");
 		
 		Object[] rawRecord = findById(customerId, pathsOfFields);
 		
@@ -43,9 +44,9 @@ public class CustomerRepository extends BaseRepository<Customer> {
 	public void update(int customerId, CustomerUpdateModel customerUpdateModel) {
 		
 		LinkedHashSet<String> pathsOfFields = new LinkedHashSet<String>();
-		pathsOfFields.add("customer.contactInfo.mobile");
-		pathsOfFields.add("customer.contactInfo.email");
-		pathsOfFields.add("customer.contactInfo.mailingAddress");
+		pathsOfFields.add("customer.contactInformation.mobile");
+		pathsOfFields.add("customer.contactInformation.email");
+		pathsOfFields.add("customer.contactInformation.mailingAddress");
 		
 		updateById(customerId, pathsOfFields, customerUpdateModel);		
 	}

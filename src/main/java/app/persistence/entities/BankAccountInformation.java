@@ -9,6 +9,7 @@ public class BankAccountInformation {
 	@Column(name = "account_number")
 	private String accountNumber;	
 	
+	@Column
 	private float balance;
 	
 	public String getAccountNumber() {

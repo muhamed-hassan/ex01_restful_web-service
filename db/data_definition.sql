@@ -45,6 +45,7 @@ CREATE TABLE `customer` (
   `mailing_address` VARCHAR(500) NOT NULL,
   `account_number` CHAR(8) NOT NULL,
   `balance` FLOAT UNSIGNED NOT NULL,
+  `joined_on` DATE NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `national_id_UQ` (`national_id`),
   UNIQUE KEY `mobile_UQ` (`mobile`),
@@ -52,14 +53,17 @@ CREATE TABLE `customer` (
   UNIQUE KEY `account_number_UQ` (`account_number`)
 );
 
-CREATE TABLE `transaction` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `customer_id` INT UNSIGNED NOT NULL,
-  `bank_transaction_type_id` INT UNSIGNED NOT NULL,
+CREATE TABLE `initiated_transaction` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,  
   `amount` FLOAT UNSIGNED NOT NULL,
   `occurred_on` DATE NOT NULL,
+  `initiator_id` INT UNSIGNED NOT NULL,
+  `beneficiary_id` INT UNSIGNED NOT NULL,
+  `bank_transaction_type_id` INT UNSIGNED NOT NULL,
+  `notes` VARCHAR(1000) NOT NULL,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`customer_id`) REFERENCES `customer` (`id`),
+  FOREIGN KEY (`initiator_id`) REFERENCES `customer` (`id`),
+  FOREIGN KEY (`beneficiary_id`) REFERENCES `customer` (`id`),
   FOREIGN KEY (`bank_transaction_type_id`) REFERENCES `bank_transaction` (`id`)
 );
 

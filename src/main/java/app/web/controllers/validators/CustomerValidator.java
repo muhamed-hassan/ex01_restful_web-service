@@ -43,6 +43,10 @@ public class CustomerValidator {
 	private String mailingAddressFieldValidationRegex = "[a-zA-Z0-9-,\\ ]{15,500}";
 	private String mailingAddressFieldIsInvalidMsg = "Mailing address contains invalid characters which shall contain alphanumeric characters with minimum of 15 characters and maximum of 500 characters.";
 	
+	private String notesField = "notes";
+	private String notesFieldIsRequiredMsg = "Notes is required.";
+	private String notesFieldValidationRegex = "[a-zA-Z0-9-,\\ ]{50,1000}";
+	private String notesFieldIsInvalidMsg = "Notes contains invalid characters which shall contain alphanumeric characters with minimum of 50 characters and maximum of 1000 characters.";
 	
 	public void validateCustomerCreateModel(CustomerCreateModel customerCreateModel) {
 		
@@ -177,6 +181,16 @@ public class CustomerValidator {
 		
 		if (newTransactionCreateModel.getAmount() <= 0) {
 			errors.put("amount", "Amount should be a positive value.");
+		}
+		
+		String notes = newTransactionCreateModel.getNotes();
+		if (notes == null || notes.isEmpty()) {			
+			errors.put(notesField, notesFieldIsRequiredMsg);			
+		} else {			
+			notes = notes.trim();
+			if (!notes.matches(notesFieldValidationRegex)) {
+				errors.put(notesField, notesFieldIsInvalidMsg);
+			}			
 		}
 		
 		if (!errors.isEmpty()) {			

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import app.domain.CustomerService;
 import app.persistence.entities.Customer;
-import app.web.controllers.models.BriefViewOfCustomerReadModel;
+import app.web.controllers.models.CustomerReadModelForUpdate;
 import app.web.controllers.models.CustomerCreateModel;
 import app.web.controllers.models.CustomerUpdateModel;
 import app.web.controllers.models.DetailedViewOfCustomerReadModel;
@@ -22,7 +22,7 @@ import app.web.controllers.models.NewLoanCreateModel;
 import app.web.controllers.models.NewTransactionCreateModel;
 import app.web.controllers.transformers.CustomerTransformer;
 import app.web.controllers.transformers.IssuedBankCardTransformer;
-import app.web.controllers.transformers.TransactionTransformer;
+import app.web.controllers.transformers.InitiatedTransactionTransformer;
 import app.web.controllers.validators.CustomerValidator;
 
 @RequestMapping("customers")
@@ -39,7 +39,7 @@ public class CustomerController {
 	private IssuedBankCardTransformer issuedBankCardTransformer;
 	
 	@Autowired
-	private TransactionTransformer transactionTransformer;
+	private InitiatedTransactionTransformer initiatedTransactionTransformer;
 	
 	@Autowired
 	private CustomerValidator customerValidator;
@@ -78,19 +78,19 @@ public class CustomerController {
 		return new ResponseEntity<Object>(HttpStatus.CREATED);
 	}
 	
-	@RequestMapping(method = RequestMethod.POST, value = "{customerId}/new-transactions/{bankTransactionTypeId}")
-	public ResponseEntity<Object> intiateTransaction(@PathVariable int customerId, @PathVariable int bankTransactionTypeId, @RequestBody NewTransactionCreateModel newTransactionCreateModel) {
+	@RequestMapping(method = RequestMethod.POST, value = "{initiatorId}/new-transactions/{bankTransactionTypeId}")
+	public ResponseEntity<Object> intiateTransaction(@PathVariable int initiatorId, @PathVariable int bankTransactionTypeId, @RequestBody NewTransactionCreateModel newTransactionCreateModel) {
 		
 		customerValidator.validateNewTransactionCreateModel(newTransactionCreateModel);
 		
-		Date occurredOn = transactionTransformer.toDate(newTransactionCreateModel.getOccurredOn());
+		Date transformedOccurredOnStrDate = initiatedTransactionTransformer.toDate(newTransactionCreateModel.getOccurredOn());
 		
-		customerService.intiateTransaction(customerId, bankTransactionTypeId, newTransactionCreateModel.getAmount(), occurredOn);
+		customerService.intiateTransaction(initiatorId, bankTransactionTypeId, newTransactionCreateModel, transformedOccurredOnStrDate);
 		
 		return new ResponseEntity<Object>(HttpStatus.CREATED);
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, value = "{customerId}/detailed-view")
+	@RequestMapping(method = RequestMethod.GET, value = "{customerId}/read-only-detailed-view")
 	public ResponseEntity<DetailedViewOfCustomerReadModel> getDetailedViewOfCustomerInformation(@PathVariable int customerId) {
 		
 		Object[] rawRecord = customerService.getDetailedViewOfCustomerInformation(customerId);
@@ -100,14 +100,14 @@ public class CustomerController {
 		return new ResponseEntity<DetailedViewOfCustomerReadModel>(detailedCustomerReadModel, HttpStatus.OK);
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, value = "{customerId}/brief-view")
-	public ResponseEntity<BriefViewOfCustomerReadModel> getBriefViewOfCustomerInformation(@PathVariable int customerId) {
+	@RequestMapping(method = RequestMethod.GET, value = "{customerId}/read-view-for-update")
+	public ResponseEntity<CustomerReadModelForUpdate> getUpdateViewOfCustomerInformation(@PathVariable int customerId) {
 		
-		Object[] rawRecord = customerService.getBriefViewOfCustomerInformation(customerId);
+		Object[] rawRecord = customerService.getUpdateViewOfCustomerInformation(customerId);
 				
-		BriefViewOfCustomerReadModel briefCustomerReadModel = customerTransformer.toBriefViewOfCustomerReadModel(rawRecord);
+		CustomerReadModelForUpdate briefCustomerReadModel = customerTransformer.toUpdateViewOfCustomerReadModel(rawRecord);
 		
-		return new ResponseEntity<BriefViewOfCustomerReadModel>(briefCustomerReadModel, HttpStatus.OK);
+		return new ResponseEntity<CustomerReadModelForUpdate>(briefCustomerReadModel, HttpStatus.OK);
 	}
 	
 	@RequestMapping(method = RequestMethod.PUT, value = "{customerId}")
