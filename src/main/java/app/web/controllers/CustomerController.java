@@ -79,13 +79,13 @@ public class CustomerController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "{initiatorId}/new-transactions/{bankTransactionTypeId}")
-	public ResponseEntity<Object> intiateTransaction(@PathVariable int initiatorId, @PathVariable int bankTransactionTypeId, @RequestBody NewTransactionCreateModel newTransactionCreateModel) {
+	public ResponseEntity<Object> initiateTransaction(@PathVariable int initiatorId, @PathVariable int bankTransactionTypeId, @RequestBody NewTransactionCreateModel newTransactionCreateModel) {
 		
 		customerValidator.validateNewTransactionCreateModel(newTransactionCreateModel);
 		
 		Date transformedOccurredOnStrDate = initiatedTransactionTransformer.toDate(newTransactionCreateModel.getOccurredOn());
 		
-		customerService.intiateTransaction(initiatorId, bankTransactionTypeId, newTransactionCreateModel, transformedOccurredOnStrDate);
+		customerService.initiateTransaction(initiatorId, bankTransactionTypeId, newTransactionCreateModel, transformedOccurredOnStrDate);
 		
 		return new ResponseEntity<Object>(HttpStatus.CREATED);
 	}

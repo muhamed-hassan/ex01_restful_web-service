@@ -101,7 +101,7 @@ public class CustomerService {
 	}
 	
 	@Transactional
-	public void intiateTransaction(int initiatorId, int bankTransactionTypeId, NewTransactionCreateModel newTransactionCreateModel, Date occurredOn) {
+	public void initiateTransaction(int initiatorId, int bankTransactionTypeId, NewTransactionCreateModel newTransactionCreateModel, Date occurredOn) {
 				
 		BankTransaction bankTransactionType = bankTransactionRepository.findById(bankTransactionTypeId);
 				
@@ -136,7 +136,7 @@ public class CustomerService {
 			
 			validateInitiatorBalance(initiator.getBankAccountInformation().getBalance(), newTransactionCreateModel.getAmount());
 			
-			// from initiator (Customer) -> to hisself/herself - initiator and beneficiary will be the same in this case
+			// from initiator (Customer) -> to himself/herself - initiator and beneficiary will be the same in this case
 			beneficiary = initiator;
 			
 			float adjustedBalanceOfBeneficiary = beneficiary.getBankAccountInformation().getBalance() - newTransactionCreateModel.getAmount();
