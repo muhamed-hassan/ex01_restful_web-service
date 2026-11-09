@@ -59,6 +59,8 @@ public class CustomerController {
 	@RequestMapping(method = RequestMethod.POST, value = "{customerId}/new-bank-cards/{bankCardTypeId}")
 	public ResponseEntity<Object> issueBankCard(@PathVariable int customerId, @PathVariable int bankCardTypeId, @RequestBody NewBankCardCreateModel newBankCardCreateModel) {
 		
+		customerValidator.validateNewBankCardCreateModel(newBankCardCreateModel);
+		
 		Date dateOfIssuance = issuedBankCardTransformer.toDate(newBankCardCreateModel.getDateOfIssuance());
 		
 		customerService.issueBankCard(customerId, bankCardTypeId, dateOfIssuance);

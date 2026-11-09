@@ -7,9 +7,11 @@ import org.springframework.stereotype.Component;
 import app.web.controllers.error_handler.WebValidationException;
 import app.web.controllers.models.CustomerCreateModel;
 import app.web.controllers.models.CustomerUpdateModel;
+import app.web.controllers.models.NewBankCardCreateModel;
 import app.web.controllers.models.NewLoanCreateModel;
 import app.web.controllers.models.NewTransactionCreateModel;
 
+// TODO: as a future enhancement, you can store the validation information in DB and load them during APP startup
 @Component
 public class CustomerValidator {
 	
@@ -50,6 +52,32 @@ public class CustomerValidator {
 	
 	private String balanceField = "balance";
 	private String balanceFieldIsInvalidMsg = "Initial balance should be 1,000.0 £";
+	
+	private String dateOfIssuanceField = "dateOfIssuance"; 
+	private String dateOfIssuanceFieldIsRequiredMsg = "Date of issuance is required.";
+	private String dateOfIssuanceFieldValidationRegex = "(2[0-9][0-9][0-9])-(0[1-9]|1[0-2])-(0[1-9]|([1-2][0-9])|3[0-1])";
+	private String dateOfIssuanceFieldIsInvalidMsg = "Date of issuance contains invalid characters which shall be in the form of yyyy-MM-dd.";
+	
+	public void validateNewBankCardCreateModel(NewBankCardCreateModel newBankCardCreateModel) {
+		
+		LinkedHashMap<String, String> errors = new LinkedHashMap<String, String>(0);
+		
+		String dateOfIssuance = newBankCardCreateModel.getDateOfIssuance();
+		if (dateOfIssuance == null || dateOfIssuance.isEmpty()) {			
+			errors.put(dateOfIssuanceField, dateOfIssuanceFieldIsRequiredMsg);			
+		} else {			
+			dateOfIssuance = dateOfIssuance.trim();
+			if (!dateOfIssuance.matches(dateOfIssuanceFieldValidationRegex)) {
+				errors.put(dateOfIssuanceField, dateOfIssuanceFieldIsInvalidMsg);
+			}			
+		}
+		
+		if (!errors.isEmpty()) {			
+			WebValidationException webValidationException = new WebValidationException();
+			webValidationException.setErrors(errors);
+			throw webValidationException;
+		}		
+	}
 	
 	public void validateCustomerCreateModel(CustomerCreateModel customerCreateModel) {
 		
