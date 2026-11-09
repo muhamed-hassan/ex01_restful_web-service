@@ -48,6 +48,9 @@ public class CustomerValidator {
 	private String notesFieldValidationRegex = "[a-zA-Z0-9-,\\ ]{50,1000}";
 	private String notesFieldIsInvalidMsg = "Notes contains invalid characters which shall contain alphanumeric characters with minimum of 50 characters and maximum of 1000 characters.";
 	
+	private String balanceField = "balance";
+	private String balanceFieldIsInvalidMsg = "Initial balance should be 1,000.0 £";
+	
 	public void validateCustomerCreateModel(CustomerCreateModel customerCreateModel) {
 		
 		LinkedHashMap<String, String> errors = new LinkedHashMap<String, String>(0);
@@ -110,6 +113,11 @@ public class CustomerValidator {
 			if (!mailingAddress.matches(mailingAddressFieldValidationRegex)) {
 				errors.put(mailingAddressField, mailingAddressFieldIsInvalidMsg);
 			}			
+		}
+		
+		float balance = customerCreateModel.getBalance();
+		if (balance != 1000) {
+			errors.put(balanceField, balanceFieldIsInvalidMsg);
 		}
 		
 		if (!errors.isEmpty()) {			
