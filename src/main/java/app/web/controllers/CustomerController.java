@@ -13,16 +13,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import app.domain.CustomerService;
 import app.persistence.entities.Customer;
-import app.web.controllers.models.CustomerReadModelForUpdate;
 import app.web.controllers.models.CustomerCreateModel;
+import app.web.controllers.models.CustomerReadModelForUpdate;
 import app.web.controllers.models.CustomerUpdateModel;
 import app.web.controllers.models.DetailedViewOfCustomerReadModel;
 import app.web.controllers.models.NewBankCardCreateModel;
 import app.web.controllers.models.NewLoanCreateModel;
 import app.web.controllers.models.NewTransactionCreateModel;
 import app.web.controllers.transformers.CustomerTransformer;
-import app.web.controllers.transformers.IssuedBankCardTransformer;
 import app.web.controllers.transformers.InitiatedTransactionTransformer;
+import app.web.controllers.transformers.IssuedBankCardTransformer;
+import app.web.controllers.transformers.LoanTransformer;
 import app.web.controllers.validators.CustomerValidator;
 
 @RequestMapping("customers")
@@ -37,6 +38,9 @@ public class CustomerController {
 	
 	@Autowired
 	private IssuedBankCardTransformer issuedBankCardTransformer;
+	
+	@Autowired
+	private LoanTransformer loanTransformer;
 	
 	@Autowired
 	private InitiatedTransactionTransformer initiatedTransactionTransformer;
@@ -73,9 +77,9 @@ public class CustomerController {
 		
 		customerValidator.validateNewLoanCreateModel(newLoanCreateModel);
 		
-		Date dateOfIssuance = issuedBankCardTransformer.toDate(newLoanCreateModel.getBorrowingDate());
+		Date borrowingDate = loanTransformer.toDate(newLoanCreateModel.getBorrowingDate());
 		
-		customerService.borrowLoan(customerId, loanTypeId, newLoanCreateModel.getAmount(), dateOfIssuance);
+		customerService.borrowLoan(customerId, loanTypeId, newLoanCreateModel.getAmount(), borrowingDate);
 		
 		return new ResponseEntity<Object>(HttpStatus.CREATED);
 	}
