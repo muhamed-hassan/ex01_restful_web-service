@@ -41,6 +41,19 @@ public class CustomerRepository extends BaseRepository<Customer> {
 		return rawRecord;
 	}
 	
+	public Customer findByAccountNumber(String accountNumber) {
+		
+		String query = "SELECT customer " + 
+					   "FROM   Customer customer " +
+					   "WHERE  customer.bankAccountInformation.accountNumber = :accountNumberParam";
+
+		Customer loadedCustomer = entityManager.createQuery(query, Customer.class)
+												.setParameter("accountNumberParam", accountNumber)
+												.getSingleResult();	
+
+		return loadedCustomer;
+	}
+	
 	public void update(int customerId, CustomerUpdateModel customerUpdateModel) {
 		
 		LinkedHashSet<String> pathsOfFields = new LinkedHashSet<String>();

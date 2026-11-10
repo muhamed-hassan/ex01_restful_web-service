@@ -45,6 +45,11 @@ public class CustomerValidator {
 	private String mailingAddressFieldValidationRegex = "[a-zA-Z0-9-,\\ ]{15,500}";
 	private String mailingAddressFieldIsInvalidMsg = "Mailing address contains invalid characters which shall contain alphanumeric characters with minimum of 15 characters and maximum of 500 characters.";
 	
+	private String beneficiaryAccountNumberField = "beneficiaryAccountNumber";
+	private String beneficiaryAccountNumberFieldIsRequiredMsg = "Beneficiary Account number is required.";
+	private String beneficiaryAccountNumberFieldValidationRegex = "[1-9]{1}[0-9]{7}";
+	private String beneficiaryAccountNumberFieldIsInvalidMsg = "Beneficiary account number contains invalid characters which shall consist of 8 digits.";
+	
 	private String notesField = "notes";
 	private String notesFieldIsRequiredMsg = "Notes is required.";
 	private String notesFieldValidationRegex = "[a-zA-Z0-9-,\\ ]{50,1000}";
@@ -246,6 +251,16 @@ public class CustomerValidator {
 			occurredOn = occurredOn.trim();
 			if (!occurredOn.matches(occurredOnFieldValidationRegex)) {
 				errors.put(occurredOnField, occurredOnFieldIsInvalidMsg);
+			}			
+		}
+		
+		String beneficiaryAccountNumber = newTransactionCreateModel.getBeneficiaryAccountNumber();
+		if (beneficiaryAccountNumber == null || beneficiaryAccountNumber.isEmpty()) {			
+			errors.put(beneficiaryAccountNumberField, beneficiaryAccountNumberFieldIsRequiredMsg);			
+		} else {			
+			beneficiaryAccountNumber = beneficiaryAccountNumber.trim();
+			if (!beneficiaryAccountNumber.matches(beneficiaryAccountNumberFieldValidationRegex)) {
+				errors.put(beneficiaryAccountNumberField, beneficiaryAccountNumberFieldIsInvalidMsg);
 			}			
 		}
 		

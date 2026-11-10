@@ -116,14 +116,15 @@ public class CustomerService {
 		String initiatedTxType = bankTransactionType.getType().toUpperCase();
 		if (TxType.DEPOSIT.name().equals(initiatedTxType)) {
 			
-			if (initiator.getId() == newTransactionCreateModel.getBeneficiaryId()) {
+			if (initiator.getBankAccountInformation().getAccountNumber().equals(newTransactionCreateModel.getBeneficiaryAccountNumber())) {
 				
 				// initiator and beneficiary will be the same in this case
 				beneficiary = initiator; // deposit to self
 				
 			} else {
 				
-				beneficiary = customerRepository.findById(newTransactionCreateModel.getBeneficiaryId());
+				beneficiary = customerRepository.findByAccountNumber(newTransactionCreateModel.getBeneficiaryAccountNumber());
+				validateBeneficiaryExistence(beneficiary);
 				
 			}
 			
@@ -136,7 +137,6 @@ public class CustomerService {
 			
 			validateInitiatorBalance(initiator.getBankAccountInformation().getBalance(), newTransactionCreateModel.getAmount());
 			
-			// from initiator (Customer) -> to himself/herself - initiator and beneficiary will be the same in this case
 			beneficiary = initiator;
 			
 			float adjustedBalanceOfBeneficiary = beneficiary.getBankAccountInformation().getBalance() - newTransactionCreateModel.getAmount();
@@ -148,7 +148,8 @@ public class CustomerService {
 		    
 			validateInitiatorBalance(initiator.getBankAccountInformation().getBalance(), newTransactionCreateModel.getAmount());
 			
-			beneficiary = customerRepository.findById(newTransactionCreateModel.getBeneficiaryId());
+			beneficiary = customerRepository.findByAccountNumber(newTransactionCreateModel.getBeneficiaryAccountNumber());
+			validateBeneficiaryExistence(beneficiary);
 			
 			float adjustedBalanceOfInitiator = initiator.getBankAccountInformation().getBalance() - newTransactionCreateModel.getAmount();
 			initiator.getBankAccountInformation().setBalance(adjustedBalanceOfInitiator);
@@ -226,6 +227,21 @@ public class CustomerService {
 		
 		if (initiatorBalance < transactionAmount) {
 			errors.put("amount", "Insufficient balance !");
+		}
+		
+		if (!errors.isEmpty()) {			
+			DomainValidationException domainValidationException = new DomainValidationException();
+			domainValidationException.setErrors(errors);
+			throw domainValidationException;
+		}
+	}
+	
+	private void validateBeneficiaryExistence(Customer customer) {
+		
+		LinkedHashMap<String, String> errors = new LinkedHashMap<String, String>(0);
+		
+		if (customer == null) {
+			errors.put("beneficiaryAccountNumber", "Beneficiary has no existence !");
 		}
 		
 		if (!errors.isEmpty()) {			

@@ -2,14 +2,14 @@ package app.web.controllers.models;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder({ "amount", "occurredOn", "beneficiaryId", "notes" })
+@JsonPropertyOrder({ "amount", "occurredOn", "beneficiaryAccountNumber", "notes" })
 public class NewTransactionCreateModel {
 
 	private float amount;
 	
 	private String occurredOn; // yyyy-MM-dd
 	
-	private int beneficiaryId;
+	private String beneficiaryAccountNumber;
 	
 	private String notes;
 
@@ -29,12 +29,12 @@ public class NewTransactionCreateModel {
 		this.occurredOn = occurredOn;
 	}
 
-	public int getBeneficiaryId() {
-		return beneficiaryId;
+	public String getBeneficiaryAccountNumber() {
+		return beneficiaryAccountNumber;
 	}
 
-	public void setBeneficiaryId(int beneficiaryId) {
-		this.beneficiaryId = beneficiaryId;
+	public void setBeneficiaryAccountNumber(String beneficiaryAccountNumber) {
+		this.beneficiaryAccountNumber = beneficiaryAccountNumber;
 	}
 
 	public String getNotes() {
