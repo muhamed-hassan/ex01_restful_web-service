@@ -63,6 +63,11 @@ public class CustomerValidator {
 	private String borrowingDateFieldValidationRegex = "(2[0-9][0-9][0-9])-(0[1-9]|1[0-2])-(0[1-9]|([1-2][0-9])|3[0-1])";
 	private String borrowingDateFieldIsInvalidMsg = "Borrowing date contains invalid characters which shall be in the form of yyyy-MM-dd.";
 	
+	private String occurredOnField = "occurredOn"; 
+	private String occurredOnFieldIsRequiredMsg = "Date of occurred-on is required.";
+	private String occurredOnFieldValidationRegex = "(2[0-9][0-9][0-9])-(0[1-9]|1[0-2])-(0[1-9]|([1-2][0-9])|3[0-1])";
+	private String occurredOnFieldIsInvalidMsg = "Date of occurred-on contains invalid characters which shall be in the form of yyyy-MM-dd.";
+	
 	public void validateNewBankCardCreateModel(NewBankCardCreateModel newBankCardCreateModel) {
 		
 		LinkedHashMap<String, String> errors = new LinkedHashMap<String, String>(0);
@@ -232,6 +237,16 @@ public class CustomerValidator {
 		
 		if (newTransactionCreateModel.getAmount() <= 0) {
 			errors.put("amount", "Amount should be a positive value.");
+		}
+		
+		String occurredOn = newTransactionCreateModel.getOccurredOn();
+		if (occurredOn == null || occurredOn.isEmpty()) {			
+			errors.put(occurredOnField, occurredOnFieldIsRequiredMsg);			
+		} else {			
+			occurredOn = occurredOn.trim();
+			if (!occurredOn.matches(occurredOnFieldValidationRegex)) {
+				errors.put(occurredOnField, occurredOnFieldIsInvalidMsg);
+			}			
 		}
 		
 		String notes = newTransactionCreateModel.getNotes();

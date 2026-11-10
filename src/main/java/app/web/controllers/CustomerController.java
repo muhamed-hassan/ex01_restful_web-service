@@ -89,9 +89,9 @@ public class CustomerController {
 		
 		customerValidator.validateNewTransactionCreateModel(newTransactionCreateModel);
 		
-		Date transformedOccurredOnStrDate = initiatedTransactionTransformer.toDate(newTransactionCreateModel.getOccurredOn());
+		Date occurredOn = initiatedTransactionTransformer.toDate(newTransactionCreateModel.getOccurredOn());
 		
-		customerService.initiateTransaction(initiatorId, bankTransactionTypeId, newTransactionCreateModel, transformedOccurredOnStrDate);
+		customerService.initiateTransaction(initiatorId, bankTransactionTypeId, newTransactionCreateModel, occurredOn);
 		
 		return new ResponseEntity<Object>(HttpStatus.CREATED);
 	}
