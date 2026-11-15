@@ -10,8 +10,8 @@ import app.persistence.entities.BankAccountInformation;
 import app.persistence.entities.ContactInformation;
 import app.persistence.entities.Customer;
 import app.web.controllers.models.BorrowedLoanReadModel;
-import app.web.controllers.models.CustomerReadModelForUpdate;
 import app.web.controllers.models.CustomerCreateModel;
+import app.web.controllers.models.CustomerReadModelForUpdate;
 import app.web.controllers.models.DetailedViewOfCustomerReadModel;
 import app.web.controllers.models.IssuedBankCardReadModel;
 import app.web.controllers.models.TransactionReadModel;
@@ -56,8 +56,6 @@ public class CustomerTransformer extends BaseTransformer<Customer, Object> {
 		detailedViewOfCustomerReadModel.setBalance((float) rawRecord[7]);
 		detailedViewOfCustomerReadModel.setJoinedOn(simpleDateFormat.format((Date) rawRecord[8]));
 		
-		// last5IssuedBankCards
-		// [{id: int32, dateOfIssuance: String[formatted as yyyy-MM-dd]}, type: String, ...]
 		ArrayList<IssuedBankCardReadModel> last5IssuedBankCards = new ArrayList<IssuedBankCardReadModel>(); 
 		ArrayList<Object[]> rawDataOfIssuedBankCards = (ArrayList<Object[]>) rawRecord[9];
 		for (int cursor = 0; cursor < rawDataOfIssuedBankCards.size(); cursor++) {
@@ -73,8 +71,6 @@ public class CustomerTransformer extends BaseTransformer<Customer, Object> {
 		}
 		detailedViewOfCustomerReadModel.setLast5IssuedBankCards(last5IssuedBankCards);
 		
-		// last5BorrowedLoans
-		// [{id: int32, amount: float, borrowingDate: String[formatted as yyyy-MM-dd]}, type: String,  ...]
 		ArrayList<BorrowedLoanReadModel> last5BorrowedLoans = new ArrayList<BorrowedLoanReadModel>(); 
 		ArrayList<Object[]> rawDataOfBorrowedLoans = (ArrayList<Object[]>) rawRecord[10];
 		for (int cursor = 0; cursor < rawDataOfBorrowedLoans.size(); cursor++) {
@@ -91,9 +87,6 @@ public class CustomerTransformer extends BaseTransformer<Customer, Object> {
 		}
 		detailedViewOfCustomerReadModel.setLast5BorrowedLoans(last5BorrowedLoans);
 		
-		
-		// last5Transactions
-		// [{id: int32, amount: float, occurredOn: String[formatted as yyyy-MM-dd]}, type: String,  ...]
 		ArrayList<TransactionReadModel> last5Transactions = new ArrayList<TransactionReadModel>();
 		ArrayList<Object[]> rawDataOfTransactions = (ArrayList<Object[]>) rawRecord[11];
 		for (int cursor = 0; cursor < rawDataOfTransactions.size(); cursor++) {

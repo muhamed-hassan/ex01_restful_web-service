@@ -25,10 +25,10 @@ public class CustomerValidator {
 	private String nationalIdFieldValidationRegex = "[0-9]{14}";
 	private String nationalIdFieldIsInvalidMsg = "National ID contains invalid characters which shall contain 14 digits only.";
 	
-	private String dateOfBirthField = "dob";
-	private String dateOfBirthFieldIsRequiredMsg = "Date of birth is required.";
-	private String dateOfBirthFieldValidationRegex = "((19[7-9][0-9])|(2[0-9][0-9][0-9]))-(0[1-9]|1[0-2])-(0[1-9]|([1-2][0-9])|3[0-1])";
-	private String dateOfBirthFieldIsInvalidMsg = "Date of birth contains invalid characters which shall be in the form of yyyy-MM-dd.";
+	private String dobField = "dob";
+	private String dobFieldIsRequiredMsg = "Date of birth is required.";
+	private String dobFieldValidationRegex = "((19[7-9][0-9])|(2[0-9][0-9][0-9]))-(0[1-9]|1[0-2])-(0[1-9]|([1-2][0-9])|3[0-1])";
+	private String dobFieldIsInvalidMsg = "Date of birth contains invalid characters which shall be in the form of yyyy-MM-dd.";
 	
 	private String mobileField = "mobile";
 	private String mobileFieldIsRequiredMsg = "Mobile is required.";
@@ -63,6 +63,9 @@ public class CustomerValidator {
 	private String dateOfIssuanceFieldValidationRegex = "(2[0-9][0-9][0-9])-(0[1-9]|1[0-2])-(0[1-9]|([1-2][0-9])|3[0-1])";
 	private String dateOfIssuanceFieldIsInvalidMsg = "Date of issuance contains invalid characters which shall be in the form of yyyy-MM-dd.";
 	
+	private String amountField = "amount";
+	private String amountFieldIsInvalidMsg = "Amount should be a positive value.";
+	
 	private String borrowingDateField = "borrowingDate"; 
 	private String borrowingDateFieldIsRequiredMsg = "Borrowing date is required.";
 	private String borrowingDateFieldValidationRegex = "(2[0-9][0-9][0-9])-(0[1-9]|1[0-2])-(0[1-9]|([1-2][0-9])|3[0-1])";
@@ -77,14 +80,10 @@ public class CustomerValidator {
 		
 		LinkedHashMap<String, String> errors = new LinkedHashMap<String, String>(0);
 		
-		String dateOfIssuance = newBankCardCreateModel.getDateOfIssuance();
-		if (dateOfIssuance == null || dateOfIssuance.isEmpty()) {			
-			errors.put(dateOfIssuanceField, dateOfIssuanceFieldIsRequiredMsg);			
-		} else {			
-			dateOfIssuance = dateOfIssuance.trim();
-			if (!dateOfIssuance.matches(dateOfIssuanceFieldValidationRegex)) {
-				errors.put(dateOfIssuanceField, dateOfIssuanceFieldIsInvalidMsg);
-			}			
+		String errMsgOfDateOfIssuanceField = getErrMsgIfAny(newBankCardCreateModel.getDateOfIssuance(), dateOfIssuanceFieldIsRequiredMsg, 
+				dateOfIssuanceFieldValidationRegex, dateOfIssuanceFieldIsInvalidMsg);
+		if (errMsgOfDateOfIssuanceField != null) {
+			errors.put(dateOfIssuanceField, errMsgOfDateOfIssuanceField);
 		}
 		
 		if (!errors.isEmpty()) {			
@@ -98,64 +97,36 @@ public class CustomerValidator {
 		
 		LinkedHashMap<String, String> errors = new LinkedHashMap<String, String>(0);
 		
-		String name = customerCreateModel.getName();
-		if (name == null || name.isEmpty()) {			
-			errors.put(nameField, nameFieldIsRequiredMsg);			
-		} else {			
-			name = name.trim();
-			if (!name.matches(nameFieldValidationRegex)) {
-				errors.put(nameField, nameFieldIsInvalidMsg);
-			}			
+		String errMsgOfNameField = getErrMsgIfAny(customerCreateModel.getName(), nameFieldIsRequiredMsg, nameFieldValidationRegex, nameFieldIsInvalidMsg);
+		if (errMsgOfNameField != null) {
+			errors.put(nameField, errMsgOfNameField);
 		}
 		
-		String nationalId = customerCreateModel.getNationalId();
-		if (nationalId == null || nationalId.isEmpty()) {			
-			errors.put(nationalIdField, nationalIdFieldIsRequiredMsg);			
-		} else {			
-			nationalId = nationalId.trim();
-			if (!nationalId.matches(nationalIdFieldValidationRegex)) {
-				errors.put(nationalIdField, nationalIdFieldIsInvalidMsg);
-			}			
+		String errMsgOfNationalIdField = getErrMsgIfAny(customerCreateModel.getNationalId(), nationalIdFieldIsRequiredMsg, nationalIdFieldValidationRegex, 
+				nationalIdFieldIsInvalidMsg);
+		if (errMsgOfNationalIdField != null) {
+			errors.put(nationalIdField, errMsgOfNationalIdField);
 		}
 		
-		String dateOfBirth = customerCreateModel.getDateOfBirth();
-		if (dateOfBirth == null || dateOfBirth.isEmpty()) {			
-			errors.put(dateOfBirthField, dateOfBirthFieldIsRequiredMsg);			
-		} else {			
-			dateOfBirth = dateOfBirth.trim();
-			if (!dateOfBirth.matches(dateOfBirthFieldValidationRegex)) {
-				errors.put(dateOfBirthField, dateOfBirthFieldIsInvalidMsg);
-			}			
+		String errMsgOfDobField = getErrMsgIfAny(customerCreateModel.getDateOfBirth(), dobFieldIsRequiredMsg, dobFieldValidationRegex, dobFieldIsInvalidMsg);
+		if (errMsgOfDobField != null) {
+			errors.put(dobField, errMsgOfDobField);
 		}
 		
-		String mobile = customerCreateModel.getMobile();
-		if (mobile == null || mobile.isEmpty()) {			
-			errors.put(mobileField, mobileFieldIsRequiredMsg);			
-		} else {			
-			mobile = mobile.trim();
-			if (!mobile.matches(mobileFieldValidationRegex)) {
-				errors.put(mobileField, mobileFieldIsInvalidMsg);
-			}			
+		String errMsgOfMobileField = getErrMsgIfAny(customerCreateModel.getMobile(), mobileFieldIsRequiredMsg, mobileFieldValidationRegex, mobileFieldIsInvalidMsg);
+		if (errMsgOfMobileField != null) {
+			errors.put(mobileField, errMsgOfMobileField);
 		}
 		
-		String email = customerCreateModel.getEmail();
-		if (email == null || email.isEmpty()) {			
-			errors.put(emailField, emailFieldIsRequiredMsg);			
-		} else {			
-			email = email.trim();
-			if (!email.matches(emailFieldValidationRegex)) {
-				errors.put(emailField, emailFieldIsInvalidMsg);
-			}			
+		String errMsgOfEmailField = getErrMsgIfAny(customerCreateModel.getEmail(), emailFieldIsRequiredMsg, emailFieldValidationRegex, emailFieldIsInvalidMsg);
+		if (errMsgOfEmailField != null) {
+			errors.put(emailField, errMsgOfEmailField);
 		}
 		
-		String mailingAddress = customerCreateModel.getMailingAddress();
-		if (mailingAddress == null || mailingAddress.isEmpty()) {			
-			errors.put(mailingAddressField, mailingAddressFieldIsRequiredMsg);			
-		} else {			
-			mailingAddress = mailingAddress.trim();
-			if (!mailingAddress.matches(mailingAddressFieldValidationRegex)) {
-				errors.put(mailingAddressField, mailingAddressFieldIsInvalidMsg);
-			}			
+		String errMsgOfMailingAddressField = getErrMsgIfAny(customerCreateModel.getMailingAddress(), mailingAddressFieldIsRequiredMsg, mailingAddressFieldValidationRegex, 
+				mailingAddressFieldIsInvalidMsg);
+		if (errMsgOfMailingAddressField != null) {
+			errors.put(mailingAddressField, errMsgOfMailingAddressField);
 		}
 		
 		float balance = customerCreateModel.getBalance();
@@ -174,34 +145,20 @@ public class CustomerValidator {
 		
 		LinkedHashMap<String, String> errors = new LinkedHashMap<String, String>(0);
 		
-		String mobile = customerUpdateModel.getMobile();
-		if (mobile == null || mobile.isEmpty()) {			
-			errors.put(mobileField, mobileFieldIsRequiredMsg);			
-		} else {			
-			mobile = mobile.trim();
-			if (!mobile.matches(mobileFieldValidationRegex)) {
-				errors.put(mobileField, mobileFieldIsInvalidMsg);
-			}			
+		String errMsgOfMobileField = getErrMsgIfAny(customerUpdateModel.getMobile(), mobileFieldIsRequiredMsg, mobileFieldValidationRegex, mobileFieldIsInvalidMsg);
+		if (errMsgOfMobileField != null) {
+			errors.put(mobileField, errMsgOfMobileField);
 		}
 		
-		String email = customerUpdateModel.getEmail();
-		if (email == null || email.isEmpty()) {			
-			errors.put(emailField, emailFieldIsRequiredMsg);			
-		} else {			
-			email = email.trim();
-			if (!email.matches(emailFieldValidationRegex)) {
-				errors.put(emailField, emailFieldIsInvalidMsg);
-			}			
+		String errMsgOfEmailField = getErrMsgIfAny(customerUpdateModel.getEmail(), emailFieldIsRequiredMsg, emailFieldValidationRegex, emailFieldIsInvalidMsg);
+		if (errMsgOfEmailField != null) {
+			errors.put(emailField, errMsgOfEmailField);
 		}
 		
-		String mailingAddress = customerUpdateModel.getMailingAddress();
-		if (mailingAddress == null || mailingAddress.isEmpty()) {			
-			errors.put(mailingAddressField, mailingAddressFieldIsRequiredMsg);			
-		} else {			
-			mailingAddress = mailingAddress.trim();
-			if (!mailingAddress.matches(mailingAddressFieldValidationRegex)) {
-				errors.put(mailingAddressField, mailingAddressFieldIsInvalidMsg);
-			}			
+		String errMsgOfMailingAddressField = getErrMsgIfAny(customerUpdateModel.getMailingAddress(), mailingAddressFieldIsRequiredMsg, mailingAddressFieldValidationRegex, 
+				mailingAddressFieldIsInvalidMsg);
+		if (errMsgOfMailingAddressField != null) {
+			errors.put(mailingAddressField, errMsgOfMailingAddressField);
 		}
 		
 		if (!errors.isEmpty()) {			
@@ -216,17 +173,13 @@ public class CustomerValidator {
 		LinkedHashMap<String, String> errors = new LinkedHashMap<String, String>(0);
 		
 		if (newLoanCreateModel.getAmount() <= 0) {
-			errors.put("amount", "Amount should be a positive value.");
+			errors.put(amountField, amountFieldIsInvalidMsg);
 		}
 		
-		String borrowingDate = newLoanCreateModel.getBorrowingDate();
-		if (borrowingDate == null || borrowingDate.isEmpty()) {			
-			errors.put(borrowingDateField, borrowingDateFieldIsRequiredMsg);			
-		} else {			
-			borrowingDate = borrowingDate.trim();
-			if (!borrowingDate.matches(borrowingDateFieldValidationRegex)) {
-				errors.put(borrowingDateField, borrowingDateFieldIsInvalidMsg);
-			}			
+		String errMsgOfBorrowingDateField = getErrMsgIfAny(newLoanCreateModel.getBorrowingDate(), borrowingDateFieldIsRequiredMsg, borrowingDateFieldValidationRegex, 
+				borrowingDateFieldIsInvalidMsg);
+		if (errMsgOfBorrowingDateField != null) {
+			errors.put(borrowingDateField, errMsgOfBorrowingDateField);
 		}
 		
 		if (!errors.isEmpty()) {			
@@ -241,37 +194,24 @@ public class CustomerValidator {
 		LinkedHashMap<String, String> errors = new LinkedHashMap<String, String>(0);
 		
 		if (newTransactionCreateModel.getAmount() <= 0) {
-			errors.put("amount", "Amount should be a positive value.");
+			errors.put(amountField, amountFieldIsInvalidMsg);
 		}
 		
-		String occurredOn = newTransactionCreateModel.getOccurredOn();
-		if (occurredOn == null || occurredOn.isEmpty()) {			
-			errors.put(occurredOnField, occurredOnFieldIsRequiredMsg);			
-		} else {			
-			occurredOn = occurredOn.trim();
-			if (!occurredOn.matches(occurredOnFieldValidationRegex)) {
-				errors.put(occurredOnField, occurredOnFieldIsInvalidMsg);
-			}			
+		String errMsgOfOccurredOnField = getErrMsgIfAny(newTransactionCreateModel.getOccurredOn(), occurredOnFieldIsRequiredMsg, occurredOnFieldValidationRegex, 
+				occurredOnFieldIsInvalidMsg);
+		if (errMsgOfOccurredOnField != null) {
+			errors.put(occurredOnField, errMsgOfOccurredOnField);
 		}
 		
-		String beneficiaryAccountNumber = newTransactionCreateModel.getBeneficiaryAccountNumber();
-		if (beneficiaryAccountNumber == null || beneficiaryAccountNumber.isEmpty()) {			
-			errors.put(beneficiaryAccountNumberField, beneficiaryAccountNumberFieldIsRequiredMsg);			
-		} else {			
-			beneficiaryAccountNumber = beneficiaryAccountNumber.trim();
-			if (!beneficiaryAccountNumber.matches(beneficiaryAccountNumberFieldValidationRegex)) {
-				errors.put(beneficiaryAccountNumberField, beneficiaryAccountNumberFieldIsInvalidMsg);
-			}			
+		String errMsgOfBeneficiaryAccountNumberField = getErrMsgIfAny(newTransactionCreateModel.getBeneficiaryAccountNumber(), beneficiaryAccountNumberFieldIsRequiredMsg, 
+				beneficiaryAccountNumberFieldValidationRegex, beneficiaryAccountNumberFieldIsInvalidMsg);
+		if (errMsgOfBeneficiaryAccountNumberField != null) {
+			errors.put(beneficiaryAccountNumberField, errMsgOfBeneficiaryAccountNumberField);
 		}
 		
-		String notes = newTransactionCreateModel.getNotes();
-		if (notes == null || notes.isEmpty()) {			
-			errors.put(notesField, notesFieldIsRequiredMsg);			
-		} else {			
-			notes = notes.trim();
-			if (!notes.matches(notesFieldValidationRegex)) {
-				errors.put(notesField, notesFieldIsInvalidMsg);
-			}			
+		String errMsgOfNotesField = getErrMsgIfAny(newTransactionCreateModel.getNotes(), notesFieldIsRequiredMsg, notesFieldValidationRegex, notesFieldIsInvalidMsg);
+		if (errMsgOfNotesField != null) {
+			errors.put(notesField, errMsgOfNotesField);
 		}
 		
 		if (!errors.isEmpty()) {			
@@ -279,6 +219,28 @@ public class CustomerValidator {
 			webValidationException.setErrors(errors);
 			throw webValidationException;
 		}
+	}
+	
+	/* *************************************************************************************************** */
+	
+	private boolean doesItHasAnEmptyValue(String textualValue) {
+		
+		return textualValue == null || textualValue.isEmpty();
+	}
+	
+	private String getErrMsgIfAny(String textualValue, String requiredMessage, String validationRegex, String validationMessage) {
+		
+		String errorMessage = null;
+		if (doesItHasAnEmptyValue(textualValue)) {			
+			errorMessage = requiredMessage;			
+		} else {			
+			textualValue = textualValue.trim();
+			if (!textualValue.matches(validationRegex)) {
+				errorMessage = validationMessage;
+			}			
+		}
+		
+		return errorMessage;
 	}
 	
 }
