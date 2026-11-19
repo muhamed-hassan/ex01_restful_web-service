@@ -2,8 +2,15 @@ package app.web.controllers.validators;
 
 import java.util.LinkedHashMap;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import app.infrastructure.configuration.WebValidatorsLoader;
+import app.persistence.entities.NumericValidationRule;
+import app.persistence.entities.TextualValidationRule;
+import app.persistence.entities.ValidationRule;
 import app.web.controllers.error_handler.WebValidationException;
 import app.web.controllers.models.CustomerCreateModel;
 import app.web.controllers.models.CustomerUpdateModel;
@@ -11,214 +18,202 @@ import app.web.controllers.models.NewBankCardCreateModel;
 import app.web.controllers.models.NewLoanCreateModel;
 import app.web.controllers.models.NewTransactionCreateModel;
 
-// TODO: as a future enhancement, you can store the validation information in DB and load them during APP startup
 @Component
 public class CustomerValidator {
 	
-	private String nameField = "name";
-	private String nameFieldIsRequiredMsg = "Name is required.";
-	private String nameFieldValidationRegex = "[a-zA-Z\\ ]{5,250}";
-	private String nameFieldIsInvalidMsg = "Name contains invalid characters which shall contain letters with minimum of 5 characters and maximum of 250 characters.";	
+	@Autowired
+	private WebValidatorsLoader webValidatorsLoader;
 	
-	private String nationalIdField = "nationalId";
-	private String nationalIdFieldIsRequiredMsg = "National ID is required.";
-	private String nationalIdFieldValidationRegex = "[0-9]{14}";
-	private String nationalIdFieldIsInvalidMsg = "National ID contains invalid characters which shall contain 14 digits only.";
+	private LinkedHashMap<String, ValidationRule> validationRules;
 	
-	private String dobField = "dob";
-	private String dobFieldIsRequiredMsg = "Date of birth is required.";
-	private String dobFieldValidationRegex = "((19[7-9][0-9])|(2[0-9][0-9][0-9]))-(0[1-9]|1[0-2])-(0[1-9]|([1-2][0-9])|3[0-1])";
-	private String dobFieldIsInvalidMsg = "Date of birth contains invalid characters which shall be in the form of yyyy-MM-dd.";
-	
-	private String mobileField = "mobile";
-	private String mobileFieldIsRequiredMsg = "Mobile is required.";
-	private String mobileFieldValidationRegex = "(07)[0-9]{9}";
-	private String mobileFieldIsInvalidMsg = "Mobile contains invalid characters which shall be in the form of 07123456789.";
-	
-	private String emailField = "email";
-	private String emailFieldIsRequiredMsg = "Email is required.";
-	private String emailFieldValidationRegex = "[a-zA-Z0-9_\\.]+(\\@)[a-zA-Z0-9]+(\\.)[a-zA-Z]+";
-	private String emailFieldIsInvalidMsg = "Email format is invalid.";
-	
-	private String mailingAddressField = "mailingAddress";
-	private String mailingAddressFieldIsRequiredMsg = "Mailing address is required.";
-	private String mailingAddressFieldValidationRegex = "[a-zA-Z0-9-,\\ ]{15,500}";
-	private String mailingAddressFieldIsInvalidMsg = "Mailing address contains invalid characters which shall contain alphanumeric characters with minimum of 15 characters and maximum of 500 characters.";
-	
-	private String beneficiaryAccountNumberField = "beneficiaryAccountNumber";
-	private String beneficiaryAccountNumberFieldIsRequiredMsg = "Beneficiary Account number is required.";
-	private String beneficiaryAccountNumberFieldValidationRegex = "[1-9]{1}[0-9]{7}";
-	private String beneficiaryAccountNumberFieldIsInvalidMsg = "Beneficiary account number contains invalid characters which shall consist of 8 digits.";
-	
-	private String notesField = "notes";
-	private String notesFieldIsRequiredMsg = "Notes is required.";
-	private String notesFieldValidationRegex = "[a-zA-Z0-9-,\\ ]{50,1000}";
-	private String notesFieldIsInvalidMsg = "Notes contains invalid characters which shall contain alphanumeric characters with minimum of 50 characters and maximum of 1000 characters.";
-	
-	private String balanceField = "balance";
-	private String balanceFieldIsInvalidMsg = "Initial balance should be 1,000.0 £";
-	
-	private String dateOfIssuanceField = "dateOfIssuance"; 
-	private String dateOfIssuanceFieldIsRequiredMsg = "Date of issuance is required.";
-	private String dateOfIssuanceFieldValidationRegex = "(2[0-9][0-9][0-9])-(0[1-9]|1[0-2])-(0[1-9]|([1-2][0-9])|3[0-1])";
-	private String dateOfIssuanceFieldIsInvalidMsg = "Date of issuance contains invalid characters which shall be in the form of yyyy-MM-dd.";
-	
-	private String amountField = "amount";
-	private String amountFieldIsInvalidMsg = "Amount should be a positive value.";
-	
-	private String borrowingDateField = "borrowingDate"; 
-	private String borrowingDateFieldIsRequiredMsg = "Borrowing date is required.";
-	private String borrowingDateFieldValidationRegex = "(2[0-9][0-9][0-9])-(0[1-9]|1[0-2])-(0[1-9]|([1-2][0-9])|3[0-1])";
-	private String borrowingDateFieldIsInvalidMsg = "Borrowing date contains invalid characters which shall be in the form of yyyy-MM-dd.";
-	
-	private String occurredOnField = "occurredOn"; 
-	private String occurredOnFieldIsRequiredMsg = "Date of occurred-on is required.";
-	private String occurredOnFieldValidationRegex = "(2[0-9][0-9][0-9])-(0[1-9]|1[0-2])-(0[1-9]|([1-2][0-9])|3[0-1])";
-	private String occurredOnFieldIsInvalidMsg = "Date of occurred-on contains invalid characters which shall be in the form of yyyy-MM-dd.";
-	
-	public void validateNewBankCardCreateModel(NewBankCardCreateModel newBankCardCreateModel) {
+	@PostConstruct
+	public void initValidationRules() {
 		
-		LinkedHashMap<String, String> errors = new LinkedHashMap<String, String>(0);
+		LinkedHashMap<String, LinkedHashMap<String, ValidationRule>> validationRulesOfValidators = 
+				webValidatorsLoader.getValidationRulesOfValidators();
 		
-		String errMsgOfDateOfIssuanceField = getErrMsgIfAny(newBankCardCreateModel.getDateOfIssuance(), dateOfIssuanceFieldIsRequiredMsg, 
-				dateOfIssuanceFieldValidationRegex, dateOfIssuanceFieldIsInvalidMsg);
-		if (errMsgOfDateOfIssuanceField != null) {
-			errors.put(dateOfIssuanceField, errMsgOfDateOfIssuanceField);
-		}
-		
-		if (!errors.isEmpty()) {			
-			WebValidationException webValidationException = new WebValidationException();
-			webValidationException.setErrors(errors);
-			throw webValidationException;
-		}		
+		validationRules = validationRulesOfValidators.get(this.getClass().getSimpleName());
 	}
+	
+	private String nameField = "name";
+	private String nationalIdField = "nationalId";	
+	private String mobileField = "mobile";
+	private String emailField = "email";
+	private String mailingAddressField = "mailingAddress";
+	private String dobField = "dateOfBirth";
+	private String balanceField = "balance";
+	private String joinedOnField = "joinedOn";
+	private String beneficiaryAccountNumberField = "beneficiaryAccountNumber";
+	private String notesField = "notes";	
+	private String dateOfIssuanceField = "dateOfIssuance"; 
+	private String amountField = "amount";
+	private String borrowingDateField = "borrowingDate"; 
+	private String occurredOnField = "occurredOn"; 
 	
 	public void validateCustomerCreateModel(CustomerCreateModel customerCreateModel) {
 		
 		LinkedHashMap<String, String> errors = new LinkedHashMap<String, String>(0);
 		
-		String errMsgOfNameField = getErrMsgIfAny(customerCreateModel.getName(), nameFieldIsRequiredMsg, nameFieldValidationRegex, nameFieldIsInvalidMsg);
+		
+		TextualValidationRule textualValidationRuleOfNameField = (TextualValidationRule) validationRules.get(nameField);		
+		String errMsgOfNameField = getErrMsgIfAny(customerCreateModel.getName(), textualValidationRuleOfNameField.getRequiredMessage(), 
+				textualValidationRuleOfNameField.getValidationRegexPattern(), textualValidationRuleOfNameField.getValidationMessage());
 		if (errMsgOfNameField != null) {
 			errors.put(nameField, errMsgOfNameField);
 		}
 		
-		String errMsgOfNationalIdField = getErrMsgIfAny(customerCreateModel.getNationalId(), nationalIdFieldIsRequiredMsg, nationalIdFieldValidationRegex, 
-				nationalIdFieldIsInvalidMsg);
+		TextualValidationRule textualValidationRuleOfNationalIdField = (TextualValidationRule) validationRules.get(nationalIdField);
+		String errMsgOfNationalIdField = getErrMsgIfAny(customerCreateModel.getNationalId(), textualValidationRuleOfNationalIdField.getRequiredMessage(), 
+				textualValidationRuleOfNationalIdField.getValidationRegexPattern(), textualValidationRuleOfNationalIdField.getValidationMessage());
 		if (errMsgOfNationalIdField != null) {
 			errors.put(nationalIdField, errMsgOfNationalIdField);
 		}
 		
-		String errMsgOfDobField = getErrMsgIfAny(customerCreateModel.getDateOfBirth(), dobFieldIsRequiredMsg, dobFieldValidationRegex, dobFieldIsInvalidMsg);
+		TextualValidationRule textualValidationRuleOfMobileField = (TextualValidationRule) validationRules.get(mobileField);
+		String errMsgOfMobileField = getErrMsgIfAny(customerCreateModel.getMobile(), textualValidationRuleOfMobileField.getRequiredMessage(), 
+				textualValidationRuleOfMobileField.getValidationRegexPattern(), textualValidationRuleOfMobileField.getValidationMessage());
+		if (errMsgOfMobileField != null) {
+			errors.put(mobileField, errMsgOfMobileField);
+		}
+		
+		TextualValidationRule textualValidationRuleOfEmailField = (TextualValidationRule) validationRules.get(emailField);
+		String errMsgOfEmailField = getErrMsgIfAny(customerCreateModel.getEmail(), textualValidationRuleOfEmailField.getRequiredMessage(), 
+				textualValidationRuleOfEmailField.getValidationRegexPattern(), textualValidationRuleOfEmailField.getValidationMessage());
+		if (errMsgOfEmailField != null) {
+			errors.put(emailField, errMsgOfEmailField);
+		}
+		
+		TextualValidationRule textualValidationRuleOfMailingAddressField = (TextualValidationRule) validationRules.get(mailingAddressField);
+		String errMsgOfMailingAddressField = getErrMsgIfAny(customerCreateModel.getMailingAddress(), textualValidationRuleOfMailingAddressField.getRequiredMessage(), 
+				textualValidationRuleOfMailingAddressField.getValidationRegexPattern(), textualValidationRuleOfMailingAddressField.getValidationMessage());
+		if (errMsgOfMailingAddressField != null) {
+			errors.put(mailingAddressField, errMsgOfMailingAddressField);
+		}
+		
+		TextualValidationRule textualValidationRuleOfDobField = (TextualValidationRule) validationRules.get(dobField);
+		String errMsgOfDobField = getErrMsgIfAny(customerCreateModel.getDateOfBirth(), textualValidationRuleOfDobField.getRequiredMessage(), 
+				textualValidationRuleOfDobField.getValidationRegexPattern(), textualValidationRuleOfDobField.getValidationMessage());
 		if (errMsgOfDobField != null) {
 			errors.put(dobField, errMsgOfDobField);
 		}
 		
-		String errMsgOfMobileField = getErrMsgIfAny(customerCreateModel.getMobile(), mobileFieldIsRequiredMsg, mobileFieldValidationRegex, mobileFieldIsInvalidMsg);
-		if (errMsgOfMobileField != null) {
-			errors.put(mobileField, errMsgOfMobileField);
+		NumericValidationRule numericValidationRuleOfBalanceField = (NumericValidationRule) validationRules.get(balanceField);		
+		if (customerCreateModel.getBalance() != 1000) { // TODO: try to move it to DB in NumericValidationRule
+			errors.put(balanceField, numericValidationRuleOfBalanceField.getValidationMessage());
 		}
 		
-		String errMsgOfEmailField = getErrMsgIfAny(customerCreateModel.getEmail(), emailFieldIsRequiredMsg, emailFieldValidationRegex, emailFieldIsInvalidMsg);
-		if (errMsgOfEmailField != null) {
-			errors.put(emailField, errMsgOfEmailField);
+		TextualValidationRule textualValidationRuleOfJoinedOnField = (TextualValidationRule) validationRules.get(joinedOnField);
+		String errMsgOfJoinedOnField = getErrMsgIfAny(customerCreateModel.getJoinedOn(), textualValidationRuleOfJoinedOnField.getRequiredMessage(), 
+				textualValidationRuleOfJoinedOnField.getValidationRegexPattern(), textualValidationRuleOfJoinedOnField.getValidationMessage());
+		if (errMsgOfJoinedOnField != null) {
+			errors.put(joinedOnField, errMsgOfJoinedOnField);
 		}
 		
-		String errMsgOfMailingAddressField = getErrMsgIfAny(customerCreateModel.getMailingAddress(), mailingAddressFieldIsRequiredMsg, mailingAddressFieldValidationRegex, 
-				mailingAddressFieldIsInvalidMsg);
-		if (errMsgOfMailingAddressField != null) {
-			errors.put(mailingAddressField, errMsgOfMailingAddressField);
-		}
 		
-		float balance = customerCreateModel.getBalance();
-		if (balance != 1000) {
-			errors.put(balanceField, balanceFieldIsInvalidMsg);
-		}
-		
-		if (!errors.isEmpty()) {			
-			WebValidationException webValidationException = new WebValidationException();
-			webValidationException.setErrors(errors);
-			throw webValidationException;
-		}
+		finalizeValidation(errors);
 	}
 	
-	public void validateCustomerUpdateModel(CustomerUpdateModel customerUpdateModel) {
+	public void validateNewBankCardCreateModel(NewBankCardCreateModel newBankCardCreateModel) {
 		
 		LinkedHashMap<String, String> errors = new LinkedHashMap<String, String>(0);
 		
-		String errMsgOfMobileField = getErrMsgIfAny(customerUpdateModel.getMobile(), mobileFieldIsRequiredMsg, mobileFieldValidationRegex, mobileFieldIsInvalidMsg);
-		if (errMsgOfMobileField != null) {
-			errors.put(mobileField, errMsgOfMobileField);
+		
+		TextualValidationRule textualValidationRuleOfDateOfIssuanceField = (TextualValidationRule) validationRules.get(dateOfIssuanceField);
+		String errMsgOfDateOfIssuanceField = getErrMsgIfAny(newBankCardCreateModel.getDateOfIssuance(), textualValidationRuleOfDateOfIssuanceField.getRequiredMessage(), 
+				textualValidationRuleOfDateOfIssuanceField.getValidationRegexPattern(), textualValidationRuleOfDateOfIssuanceField.getValidationMessage());
+		if (errMsgOfDateOfIssuanceField != null) {
+			errors.put(dateOfIssuanceField, errMsgOfDateOfIssuanceField);
 		}
 		
-		String errMsgOfEmailField = getErrMsgIfAny(customerUpdateModel.getEmail(), emailFieldIsRequiredMsg, emailFieldValidationRegex, emailFieldIsInvalidMsg);
-		if (errMsgOfEmailField != null) {
-			errors.put(emailField, errMsgOfEmailField);
-		}
 		
-		String errMsgOfMailingAddressField = getErrMsgIfAny(customerUpdateModel.getMailingAddress(), mailingAddressFieldIsRequiredMsg, mailingAddressFieldValidationRegex, 
-				mailingAddressFieldIsInvalidMsg);
-		if (errMsgOfMailingAddressField != null) {
-			errors.put(mailingAddressField, errMsgOfMailingAddressField);
-		}
-		
-		if (!errors.isEmpty()) {			
-			WebValidationException webValidationException = new WebValidationException();
-			webValidationException.setErrors(errors);
-			throw webValidationException;
-		}
+		finalizeValidation(errors);
 	}
 	
 	public void validateNewLoanCreateModel(NewLoanCreateModel newLoanCreateModel) {
 		
 		LinkedHashMap<String, String> errors = new LinkedHashMap<String, String>(0);
 		
-		if (newLoanCreateModel.getAmount() <= 0) {
-			errors.put(amountField, amountFieldIsInvalidMsg);
+		
+		NumericValidationRule numericValidationRuleOfAmountField = (NumericValidationRule) validationRules.get(amountField);
+		if (newLoanCreateModel.getAmount() <= 0) { // TODO: try to move it to DB in NumericValidationRule
+			errors.put(amountField, numericValidationRuleOfAmountField.getValidationMessage());
 		}
 		
-		String errMsgOfBorrowingDateField = getErrMsgIfAny(newLoanCreateModel.getBorrowingDate(), borrowingDateFieldIsRequiredMsg, borrowingDateFieldValidationRegex, 
-				borrowingDateFieldIsInvalidMsg);
+		TextualValidationRule textualValidationRuleOfBorrowingDateField = (TextualValidationRule) validationRules.get(borrowingDateField);
+		String errMsgOfBorrowingDateField = getErrMsgIfAny(newLoanCreateModel.getBorrowingDate(), textualValidationRuleOfBorrowingDateField.getRequiredMessage(), 
+				textualValidationRuleOfBorrowingDateField.getValidationRegexPattern(), textualValidationRuleOfBorrowingDateField.getValidationMessage());
 		if (errMsgOfBorrowingDateField != null) {
 			errors.put(borrowingDateField, errMsgOfBorrowingDateField);
 		}
 		
-		if (!errors.isEmpty()) {			
-			WebValidationException webValidationException = new WebValidationException();
-			webValidationException.setErrors(errors);
-			throw webValidationException;
-		}
+		
+		finalizeValidation(errors);
 	}
 	
 	public void validateNewTransactionCreateModel(NewTransactionCreateModel newTransactionCreateModel) {
 		
 		LinkedHashMap<String, String> errors = new LinkedHashMap<String, String>(0);
 		
-		if (newTransactionCreateModel.getAmount() <= 0) {
-			errors.put(amountField, amountFieldIsInvalidMsg);
+		
+		NumericValidationRule numericValidationRuleOfAmountField = (NumericValidationRule) validationRules.get(amountField);
+		if (newTransactionCreateModel.getAmount() <= 0) { // TODO: try to move it to DB in NumericValidationRule
+			errors.put(amountField, numericValidationRuleOfAmountField.getValidationMessage());
 		}
 		
-		String errMsgOfOccurredOnField = getErrMsgIfAny(newTransactionCreateModel.getOccurredOn(), occurredOnFieldIsRequiredMsg, occurredOnFieldValidationRegex, 
-				occurredOnFieldIsInvalidMsg);
+		TextualValidationRule textualValidationRuleOfOccurredOnField = (TextualValidationRule) validationRules.get(occurredOnField);
+		String errMsgOfOccurredOnField = getErrMsgIfAny(newTransactionCreateModel.getOccurredOn(), textualValidationRuleOfOccurredOnField.getRequiredMessage(), 
+				textualValidationRuleOfOccurredOnField.getValidationRegexPattern(), textualValidationRuleOfOccurredOnField.getValidationMessage());
 		if (errMsgOfOccurredOnField != null) {
 			errors.put(occurredOnField, errMsgOfOccurredOnField);
 		}
 		
-		String errMsgOfBeneficiaryAccountNumberField = getErrMsgIfAny(newTransactionCreateModel.getBeneficiaryAccountNumber(), beneficiaryAccountNumberFieldIsRequiredMsg, 
-				beneficiaryAccountNumberFieldValidationRegex, beneficiaryAccountNumberFieldIsInvalidMsg);
+		TextualValidationRule textualValidationRuleOfBeneficiaryAccountNumberField = (TextualValidationRule) validationRules.get(beneficiaryAccountNumberField);
+		String errMsgOfBeneficiaryAccountNumberField = getErrMsgIfAny(newTransactionCreateModel.getBeneficiaryAccountNumber(), 
+				textualValidationRuleOfBeneficiaryAccountNumberField.getRequiredMessage(), textualValidationRuleOfBeneficiaryAccountNumberField.getValidationRegexPattern(), 
+				textualValidationRuleOfBeneficiaryAccountNumberField.getValidationMessage());
 		if (errMsgOfBeneficiaryAccountNumberField != null) {
 			errors.put(beneficiaryAccountNumberField, errMsgOfBeneficiaryAccountNumberField);
 		}
 		
-		String errMsgOfNotesField = getErrMsgIfAny(newTransactionCreateModel.getNotes(), notesFieldIsRequiredMsg, notesFieldValidationRegex, notesFieldIsInvalidMsg);
+		TextualValidationRule textualValidationRuleOfNotesField = (TextualValidationRule) validationRules.get(notesField);
+		String errMsgOfNotesField = getErrMsgIfAny(newTransactionCreateModel.getNotes(), textualValidationRuleOfNotesField.getRequiredMessage(), 
+				textualValidationRuleOfNotesField.getValidationRegexPattern(), textualValidationRuleOfNotesField.getValidationMessage());
 		if (errMsgOfNotesField != null) {
 			errors.put(notesField, errMsgOfNotesField);
 		}
 		
-		if (!errors.isEmpty()) {			
-			WebValidationException webValidationException = new WebValidationException();
-			webValidationException.setErrors(errors);
-			throw webValidationException;
+		
+		finalizeValidation(errors);
+	}
+	
+	public void validateCustomerUpdateModel(CustomerUpdateModel customerUpdateModel) {
+		
+		LinkedHashMap<String, String> errors = new LinkedHashMap<String, String>(0);
+		
+		
+		TextualValidationRule textualValidationRuleOfMobileField = (TextualValidationRule) validationRules.get(mobileField);
+		String errMsgOfMobileField = getErrMsgIfAny(customerUpdateModel.getMobile(), textualValidationRuleOfMobileField.getRequiredMessage(), 
+				textualValidationRuleOfMobileField.getValidationRegexPattern(), textualValidationRuleOfMobileField.getValidationMessage());
+		if (errMsgOfMobileField != null) {
+			errors.put(mobileField, errMsgOfMobileField);
 		}
+		
+		TextualValidationRule textualValidationRuleOfEmailField = (TextualValidationRule) validationRules.get(emailField);
+		String errMsgOfEmailField = getErrMsgIfAny(customerUpdateModel.getEmail(), textualValidationRuleOfEmailField.getRequiredMessage(), 
+				textualValidationRuleOfEmailField.getValidationRegexPattern(), textualValidationRuleOfEmailField.getValidationMessage());
+		if (errMsgOfEmailField != null) {
+			errors.put(emailField, errMsgOfEmailField);
+		}
+		
+		TextualValidationRule textualValidationRuleOfMailingAddressField = (TextualValidationRule) validationRules.get(mailingAddressField);
+		String errMsgOfMailingAddressField = getErrMsgIfAny(customerUpdateModel.getMailingAddress(), textualValidationRuleOfMailingAddressField.getRequiredMessage(), 
+				textualValidationRuleOfMailingAddressField.getValidationRegexPattern(), textualValidationRuleOfMailingAddressField.getValidationMessage());
+		if (errMsgOfMailingAddressField != null) {
+			errors.put(mailingAddressField, errMsgOfMailingAddressField);
+		}
+		
+
+		finalizeValidation(errors);
 	}
 	
 	/* *************************************************************************************************** */
@@ -241,6 +236,15 @@ public class CustomerValidator {
 		}
 		
 		return errorMessage;
+	}
+	
+	private void finalizeValidation(LinkedHashMap<String, String> errors) {
+		
+		if (!errors.isEmpty()) {			
+			WebValidationException webValidationException = new WebValidationException();
+			webValidationException.setErrors(errors);
+			throw webValidationException;
+		}
 	}
 	
 }

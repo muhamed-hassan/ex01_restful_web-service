@@ -221,6 +221,8 @@ public class CustomerService {
 	
 	/* *************************************************************************************************** */
 	
+	// TODO: move business validation rules to db
+	
 	private void validateInitiatorBalance(float initiatorBalance, float transactionAmount) {
 		
 		LinkedHashMap<String, String> errors = new LinkedHashMap<String, String>(0);

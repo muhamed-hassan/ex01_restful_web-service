@@ -7,13 +7,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class DateFormatSetting {
+public class DateFormatSettings {
 	
 	@Value("${date.pattern}")
     private String datePattern;
 	
 	@Bean
-	public SimpleDateFormat dateFormatter() {
+	public SimpleDateFormat simpleDateFormat() {
 		
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(datePattern);
 		return simpleDateFormat;
